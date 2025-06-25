@@ -42,7 +42,8 @@
 
 关键在于找到适合目标用户群体和商业目标的**最佳平衡点**。
 
-![whiteboard_exported_image.png](E:\工作文档\whiteboard_exported_image.png)
+![whiteboard_exported_image](https://github.com/user-attachments/assets/e7cb4e1c-760c-46a8-ad5e-b0a5d21e2e1b)
+
 
 ## 不同反应模式数值设计的区别
 
