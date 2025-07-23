@@ -6,14 +6,11 @@ author: ShiroisWhite
 markdown: kramdown
 highlighter: rouge
 
-# Slate主题的插件配置
-# plugins:
-#  - jekyll-remote-theme
+# 必须启用这个插件才能使用remote_theme
+plugins:
+  - jekyll-remote-theme
 
-# 基本的kramdown配置（不包含math_engine）
-# kramdown:
-#   input: GFM
-#   syntax_highlighter: rouge
-#   syntax_highlighter_opts:
-#     block:
-#       line_numbers: false
+# 基本的kramdown配置
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
