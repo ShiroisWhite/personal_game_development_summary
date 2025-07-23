@@ -2,7 +2,18 @@ remote_theme: pages-themes/slate
 title: 游戏设计思考录
 description: 数值设计、系统策划与玩家体验的深度思考
 author: ShiroisWhite
+
 markdown: kramdown
+highlighter: rouge
+
+# Slate主题的插件配置
+plugins:
+  - jekyll-remote-theme
+
+# 基本的kramdown配置（不包含math_engine）
 kramdown:
-  math_engine: mathjax
+  input: GFM
   syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
