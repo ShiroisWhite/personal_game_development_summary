@@ -1,7 +1,7 @@
 # 目录
-1. **数值膨胀的升维破局：以明日方舟为例的长线游戏数值设计分析**：从升维、退环境、随机、消耗四个角度分析了明日方舟的数值膨胀控制策略，以及提出后续的改进建议。
-2. **随机池过大导致随机体验下降的解决方案**：以明日方舟【中坚寻访】为例，提出"分而治之，打标签分组"的方案，改善长线游戏中内容增加，随机池扩大导致的随机体验下降的问题。
-3. **恐怖黎明数值拆解V0.1**：分析了恐怖黎明的战斗数值框架。
-4. **游戏反应模式设计策略：运动反应 vs 认知反应的选择与平衡**(WIP)：从反应模式分析了两类反应类型对应的游戏风格、受众以及数值设计范式区别。
-5. **前期开发与后验结果无法获取的矛盾**：分析了数值开发时，需要某个后验结果，但初次开发时并没有这个后验结果的困境及其解决方案。
-6. **wireless-conmmunication-journey**：使用Manus开发的网页小游戏，通俗地解释了一条信息从发送者传输到接收者的全过程及其原理。
+1. [**数值膨胀的升维破局：以明日方舟为例的长线游戏数值设计分析**](https://github.com/ShiroisWhite/personal_game_development_summary/blob/c67b3fe92ccca95eba4c88dff9962aa2af08487a/1.%20%E6%95%B0%E5%80%BC%E8%86%A8%E8%83%80%E7%9A%84%E5%8D%87%E7%BB%B4%E7%A0%B4%E5%B1%80%EF%BC%9A%E4%BB%A5%E6%98%8E%E6%97%A5%E6%96%B9%E8%88%9F%E4%B8%BA%E4%BE%8B%E7%9A%84%E9%95%BF%E7%BA%BF%E6%B8%B8%E6%88%8F%E8%AE%BE%E8%AE%A1%E5%88%86%E6%9E%90.md)：从升维、退环境、随机、消耗四个角度分析了明日方舟的数值膨胀控制策略，以及提出后续的改进建议。
+2. [**随机池过大导致随机体验下降的解决方案**](https://github.com/ShiroisWhite/personal_game_development_summary/blob/c67b3fe92ccca95eba4c88dff9962aa2af08487a/2.%20%E9%9A%8F%E6%9C%BA%E6%B1%A0%E8%BF%87%E5%A4%A7%E5%AF%BC%E8%87%B4%E9%9A%8F%E6%9C%BA%E4%BD%93%E9%AA%8C%E4%B8%8B%E9%99%8D%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.md)：以明日方舟【中坚寻访】为例，提出"分而治之，打标签分组"的方案，改善长线游戏中内容增加，随机池扩大导致的随机体验下降的问题。
+3. [**恐怖黎明数值拆解V0.1**](https://github.com/ShiroisWhite/personal_game_development_summary/blob/c67b3fe92ccca95eba4c88dff9962aa2af08487a/3.%20%E6%81%90%E6%80%96%E9%BB%8E%E6%98%8E%E6%95%B0%E5%80%BC%E6%8B%86%E8%A7%A3V0.1.pdf)：分析了恐怖黎明的战斗数值框架。
+4. [**游戏反应模式设计策略：运动反应 vs 认知反应的选择与平衡**(WIP)](https://github.com/ShiroisWhite/personal_game_development_summary/blob/c67b3fe92ccca95eba4c88dff9962aa2af08487a/4.%20%E6%B8%B8%E6%88%8F%E5%8F%8D%E5%BA%94%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1%E7%AD%96%E7%95%A5%EF%BC%9A%E8%BF%90%E5%8A%A8%E5%8F%8D%E5%BA%94%20vs%20%E8%AE%A4%E7%9F%A5%E5%8F%8D%E5%BA%94%E7%9A%84%E9%80%89%E6%8B%A9%E4%B8%8E%E5%B9%B3%E8%A1%A1.md)：从反应模式分析了两类反应类型对应的游戏风格、受众以及数值设计范式区别。
+5. [**前期开发与后验结果无法获取的矛盾**](https://github.com/ShiroisWhite/personal_game_development_summary/blob/c67b3fe92ccca95eba4c88dff9962aa2af08487a/5.%20%E5%89%8D%E6%9C%9F%E5%BC%80%E5%8F%91%E4%B8%8E%E5%90%8E%E9%AA%8C%E7%BB%93%E6%9E%9C%E6%97%A0%E6%B3%95%E8%8E%B7%E5%8F%96%E7%9A%84%E7%9F%9B%E7%9B%BE.md)：分析了数值开发时，需要某个后验结果，但初次开发时并没有这个后验结果的困境及其解决方案。
+6. [**wireless-conmmunication-journey**](https://wvlsinvj.manus.space/)：使用Manus开发的网页小游戏，通俗地解释了一条信息从发送者传输到接收者的全过程及其原理。
