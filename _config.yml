@@ -1,3 +1,4 @@
-theme: jekyll-theme-slate
-title: 
-description: 
+remote_theme: pages-themes/slate
+title: 游戏设计思考录
+description: 数值设计、系统策划与玩家体验的深度思考
+author: ShiroisWhite
