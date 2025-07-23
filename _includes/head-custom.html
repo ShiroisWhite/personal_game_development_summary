@@ -1,5 +1,4 @@
-<!-- _includes/head-custom.html -->
-<!-- MathJax配置 for Slate theme -->
+<!-- 专为Slate主题优化的数学公式支持 -->
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
     tex2jax: {
@@ -7,19 +6,18 @@
       displayMath: [['$$','$$'], ['\\[','\\]']],
       processEscapes: true,
       processEnvironments: true,
-      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
       TeX: { 
         equationNumbers: { autoNumber: "AMS" },
         extensions: ["AMSmath.js", "AMSsymbols.js"] 
       }
-    }
-  });
-  
-  MathJax.Hub.Queue(function() {
-    // 确保在深色主题下数学公式可见
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i = 0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
+    },
+    "HTML-CSS": { 
+      styles: {
+        ".MathJax": {
+          color: "#c9c9c9 !important"  // Slate主题的文字颜色
+        }
+      }
     }
   });
 </script>
@@ -27,19 +25,3 @@
 <script type="text/javascript" async
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
 </script>
-
-<!-- 为Slate主题优化数学公式显示 -->
-<style>
-  .has-jax {
-    background: inherit !important;
-    color: #c9c9c9 !important; /* Slate主题的文字颜色 */
-  }
-  
-  .MathJax {
-    color: #c9c9c9 !important;
-  }
-  
-  .MathJax_Display {
-    background: inherit !important;
-  }
-</style>
