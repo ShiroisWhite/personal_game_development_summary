@@ -7,13 +7,13 @@ markdown: kramdown
 highlighter: rouge
 
 # Slate主题的插件配置
-plugins:
-  - jekyll-remote-theme
+# plugins:
+#  - jekyll-remote-theme
 
 # 基本的kramdown配置（不包含math_engine）
-kramdown:
-  input: GFM
-  syntax_highlighter: rouge
-  syntax_highlighter_opts:
-    block:
-      line_numbers: false
+# kramdown:
+#   input: GFM
+#   syntax_highlighter: rouge
+#   syntax_highlighter_opts:
+#     block:
+#       line_numbers: false
