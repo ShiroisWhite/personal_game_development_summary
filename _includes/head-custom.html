@@ -1,9 +1,17 @@
-<!-- 专为Slate主题优化的数学公式支持 -->
+<!-- 增强版MathJax配置，支持GitHub格式 -->
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
     tex2jax: {
-      inlineMath: [['$','$'], ['\\(','\\)']],
-      displayMath: [['$$','$$'], ['\\[','\\]']],
+      // 支持多种格式
+      inlineMath: [
+        ['$','$'], 
+        ['\\(','\\)'],
+        ['$`','`$']  // 添加对GitHub格式的支持
+      ],
+      displayMath: [
+        ['$$','$$'], 
+        ['\\[','\\]']
+      ],
       processEscapes: true,
       processEnvironments: true,
       skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
@@ -15,7 +23,7 @@
     "HTML-CSS": { 
       styles: {
         ".MathJax": {
-          color: "#c9c9c9 !important"  // Slate主题的文字颜色
+          color: "#c9c9c9 !important"
         }
       }
     }
