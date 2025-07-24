@@ -1,10 +1,29 @@
+remote_theme: cotes2020/jekyll-theme-chirpy
 title: 游戏设计思考录
 description: 数值设计、系统策划与玩家体验的深度思考
-author: ShiroisWhite
+url: "https://你的用户名.github.io"
+baseurl: "/仓库名"
 
-theme: minima
+author:
+  name: ShiroisWhite
+  email: 你的邮箱
+  links:
+    - https://github.com/你的用户名
+
 markdown: kramdown
 highlighter: rouge
 
 plugins:
+  - jekyll-remote-theme
   - jekyll-feed
+  - jekyll-sitemap
+
+# 启用数学公式（Chirpy内置支持）
+math: true
+
+# Chirpy主题设置
+theme_mode: dual  # 支持亮色/暗色模式切换
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
