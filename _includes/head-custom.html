@@ -1,38 +1,36 @@
-<!-- 完全兼容GitHub和Pages的数学公式配置 -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      // 添加对GitHub格式的支持
-      inlineMath: [
-        ['$`','`$'],    // GitHub格式 - 优先级最高
-        ['$','$'],      // 标准格式 - 备用
-        ['\\(','\\)']   // 另一种标准格式
-      ],
-      displayMath: [
-        ['$$','$$'], 
-        ['\\[','\\]']
-      ],
-      processEscapes: true,
-      processEnvironments: true,
-      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-      // 防止与代码块冲突
-      ignoreClass: "tex2jax_ignore",
-      processClass: "tex2jax_process",
-      TeX: { 
-        equationNumbers: { autoNumber: "AMS" },
-        extensions: ["AMSmath.js", "AMSsymbols.js"] 
-      }
-    },
-    "HTML-CSS": { 
-      styles: {
-        ".MathJax": {
-          color: "#c9c9c9 !important"  // Slate主题适配
-        }
-      }
-    }
-  });
+<!-- 更稳定的MathJax配置 -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [
+      ['$`', '`$'],     // GitHub格式
+      ['$', '$'],       // 标准格式
+      ['\\(', '\\)']    // 备用格式
+    ],
+    displayMath: [
+      ['$$', '$$'],
+      ['\\[', '\\]']
+    ],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  }
+};
 </script>
 
-<script type="text/javascript" async
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
 </script>
+
+<!-- Slate主题的数学公式样式优化 -->
+<style>
+.MathJax {
+  color: #c9c9c9 !important;
+}
+mjx-container {
+  color: #c9c9c9 !important;
+}
+</style>
