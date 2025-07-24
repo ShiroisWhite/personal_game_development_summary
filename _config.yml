@@ -1,16 +1,27 @@
-remote_theme: pages-themes/slate
+remote_theme: daattali/beautiful-jekyll
 title: 游戏设计思考录
 description: 数值设计、系统策划与玩家体验的深度思考
 author: ShiroisWhite
 
+# 作者信息
+author:
+  name: ShiroisWhite
+  email: 你的邮箱
+
 markdown: kramdown
 highlighter: rouge
 
-# 必须启用这个插件才能使用remote_theme
 plugins:
   - jekyll-remote-theme
 
-# 基本的kramdown配置
-kramdown:
-  input: GFM
-  syntax_highlighter: rouge
+# 启用数学公式
+use_math: true
+
+# 网站设置
+navbar-links:
+  关于: "index"
+  
+# 社交链接（可选）
+social-network-links:
+  github: 你的GitHub用户名
+  linkedin: 你的LinkedIn
