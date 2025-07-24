@@ -1,38 +1,17 @@
-<!-- 预处理GitHub格式公式，避免Markdown冲突 -->
+<!-- 最简单直接的MathJax配置 -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // 查找所有可能包含GitHub格式公式的元素
-  var elements = document.querySelectorAll('p, div, span, li, td, th');
-  
-  elements.forEach(function(element) {
-    var html = element.innerHTML;
-    
-    // 处理被markdown处理后的格式：$<code>公式</code>$
-    html = html.replace(/\$<code>([^<]+)<\/code>\$/g, '$$$1$');
-    
-    // 处理可能的其他变形
-    html = html.replace(/\$`([^`]+)`\$/g, '$$$1$');
-    
-    if (html !== element.innerHTML) {
-      element.innerHTML = html;
-    }
-  });
-  
-  // 重新处理MathJax
-  if (window.MathJax) {
-    MathJax.typesetPromise();
-  }
-});
-</script>
-
-<script>
-window.MathJax = {
+MathJax = {
   tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], ['\\[', '\\]']],
-    processEscapes: true
+    inlineMath: [['$', '$']],
+    displayMath: [['$$', '$$']]
+  },
+  startup: {
+    ready: function () {
+      console.log('MathJax is loaded and ready');
+      MathJax.startup.defaultReady();
+    }
   }
 };
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
