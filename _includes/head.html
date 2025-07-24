@@ -37,44 +37,72 @@ window.MathJax = {
   {%- include google-analytics.html -%}
 {%- endif -%}
 
-<!-- GitHub格式预处理脚本 -->
+<!-- 增强调试的GitHub格式预处理脚本 -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // 等待页面完全加载
   setTimeout(function() {
     console.log('开始处理GitHub格式公式');
     
-    // 获取所有可能包含数学公式的元素
-    const elements = document.querySelectorAll('p, div, span, li, td, th, h1, h2, h3, h4, h5, h6');
-    let foundGitHubFormat = false;
-    
-    elements.forEach(function(element) {
-      const originalHTML = element.innerHTML;
+    try {
+      // 获取所有可能包含数学公式的元素
+      const elements = document.querySelectorAll('p, div, span, li, td, th, h1, h2, h3, h4, h5, h6');
+      console.log('找到元素数量:', elements.length);
       
-      // 检查是否包含GitHub格式
-      if (originalHTML.includes('$`') && originalHTML.includes('`$')) {
-        console.log('发现GitHub格式公式:', originalHTML);
-        
-        // 将 $`公式`$ 转换为 $公式$
-        let newHTML = originalHTML.replace(/\$`([^`]+)`\$/g, '$$$1$');
-        
-        if (newHTML !== originalHTML) {
-          element.innerHTML = newHTML;
-          foundGitHubFormat = true;
-          console.log('转换后:', newHTML);
+      let foundGitHubFormat = false;
+      let processedCount = 0;
+      
+      elements.forEach(function(element, index) {
+        try {
+          const originalHTML = element.innerHTML;
+          
+          // 详细日志
+          if (originalHTML.includes('$`')) {
+            console.log(`元素${index}包含$\`:`, originalHTML);
+          }
+          if (originalHTML.includes('`$')) {
+            console.log(`元素${index}包含\`$:`, originalHTML);
+          }
+          
+          // 检查是否包含完整的GitHub格式
+          if (originalHTML.includes('$`') && originalHTML.includes('`$')) {
+            console.log('发现GitHub格式公式 在元素', index, ':', originalHTML);
+            
+            // 将 $`公式`$ 转换为 $公式$
+            let newHTML = originalHTML.replace(/\$`([^`]+)`\$/g, '$$$1$');
+            
+            if (newHTML !== originalHTML) {
+              element.innerHTML = newHTML;
+              foundGitHubFormat = true;
+              console.log('转换成功:', newHTML);
+            } else {
+              console.log('转换失败，原HTML:', originalHTML);
+            }
+          }
+          
+          processedCount++;
+        } catch (elementError) {
+          console.error('处理元素时出错:', elementError);
         }
-      }
-    });
-    
-    // 如果找到了GitHub格式，重新渲染MathJax
-    if (foundGitHubFormat && window.MathJax) {
-      console.log('重新渲染MathJax');
-      MathJax.typesetPromise().then(() => {
-        console.log('MathJax重新渲染完成');
-      }).catch((err) => {
-        console.log('MathJax渲染错误:', err);
       });
+      
+      console.log('处理完成，共处理元素:', processedCount);
+      console.log('是否找到GitHub格式:', foundGitHubFormat);
+      
+      // 如果找到了GitHub格式，重新渲染MathJax
+      if (foundGitHubFormat && window.MathJax) {
+        console.log('开始重新渲染MathJax');
+        MathJax.typesetPromise().then(() => {
+          console.log('MathJax重新渲染完成');
+        }).catch((err) => {
+          console.error('MathJax渲染错误:', err);
+        });
+      } else {
+        console.log('未找到GitHub格式公式，或MathJax未加载');
+      }
+      
+    } catch (error) {
+      console.error('脚本执行出错:', error);
     }
-  }, 1000); // 延迟1秒确保页面完全加载
+  }, 1000);
 });
 </script>
