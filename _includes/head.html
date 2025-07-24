@@ -36,3 +36,45 @@ window.MathJax = {
 {%- if jekyll.environment == 'production' and site.google_analytics -%}
   {%- include google-analytics.html -%}
 {%- endif -%}
+
+<!-- GitHub格式预处理脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 等待页面完全加载
+  setTimeout(function() {
+    console.log('开始处理GitHub格式公式');
+    
+    // 获取所有可能包含数学公式的元素
+    const elements = document.querySelectorAll('p, div, span, li, td, th, h1, h2, h3, h4, h5, h6');
+    let foundGitHubFormat = false;
+    
+    elements.forEach(function(element) {
+      const originalHTML = element.innerHTML;
+      
+      // 检查是否包含GitHub格式
+      if (originalHTML.includes('$`') && originalHTML.includes('`$')) {
+        console.log('发现GitHub格式公式:', originalHTML);
+        
+        // 将 $`公式`$ 转换为 $公式$
+        let newHTML = originalHTML.replace(/\$`([^`]+)`\$/g, '$$$1$');
+        
+        if (newHTML !== originalHTML) {
+          element.innerHTML = newHTML;
+          foundGitHubFormat = true;
+          console.log('转换后:', newHTML);
+        }
+      }
+    });
+    
+    // 如果找到了GitHub格式，重新渲染MathJax
+    if (foundGitHubFormat && window.MathJax) {
+      console.log('重新渲染MathJax');
+      MathJax.typesetPromise().then(() => {
+        console.log('MathJax重新渲染完成');
+      }).catch((err) => {
+        console.log('MathJax渲染错误:', err);
+      });
+    }
+  }, 1000); // 延迟1秒确保页面完全加载
+});
+</script>
