@@ -1,18 +1,3 @@
----
-title: 数值膨胀的升维破局：以明日方舟为例的长线游戏设计分析
----
-
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$`', '`$'], ['$', '$']],
-    displayMath: [['$$', '$$']],
-    processEscapes: true
-  }
-};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
 # 数值膨胀的升维破局：以明日方舟为例的长线游戏数值设计分析
 
 ## 引言
