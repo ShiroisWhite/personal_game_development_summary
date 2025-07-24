@@ -6,7 +6,7 @@ author: ShiroisWhite
 # 作者信息
 author:
   name: ShiroisWhite
-  email: 你的邮箱
+  email: bzcbzc@mail.ustc.edu.cn
 
 markdown: kramdown
 highlighter: rouge
@@ -23,5 +23,4 @@ navbar-links:
   
 # 社交链接（可选）
 social-network-links:
-  github: 你的GitHub用户名
-  linkedin: 你的LinkedIn
+  github: ShiroisWhite
