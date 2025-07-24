@@ -38,7 +38,7 @@ window.MathJax = {
 {%- endif -%}
 
 
-<!-- 修复后的GitHub格式预处理脚本 -->
+<!-- 修复GitHub格式的正确脚本 -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(function() {
@@ -53,13 +53,10 @@ document.addEventListener('DOMContentLoaded', function() {
       elements.forEach(function(element, index) {
         const originalHTML = element.innerHTML;
         
-        // 匹配被Jekyll处理后的格式
+        // 匹配Jekyll处理后的实际格式
         let newHTML = originalHTML
-          .replace(/\$<em>([^<]+)<\/em>\$/g, '$$$1$')              // $<em>公式</em>$
-          .replace(/\$<strong>([^<]+)<\/strong>\$/g, '$$$1$')      // $<strong>公式</strong>$
-          .replace(/\$<code>([^<]+)<\/code>\$/g, '$$$1$')          // $<code>公式</code>$
-          .replace(/\$<i>([^<]+)<\/i>\$/g, '$$$1$')                // $<i>公式</i>$
-          .replace(/\$<b>([^<]+)<\/b>\$/g, '$$$1$');               // $<b>公式</b>$
+          .replace(/\$<code class="language-plaintext highlighter-rouge">([^<]+)<\/code>\$/g, '$$$1$')  // 主要格式
+          .replace(/\$<code[^>]*>([^<]+)<\/code>\$/g, '$$$1$');  // 通用code标签格式
         
         if (newHTML !== originalHTML) {
           console.log('在元素', index, '发现并转换GitHub格式');
@@ -75,17 +72,20 @@ document.addEventListener('DOMContentLoaded', function() {
       if (foundGitHubFormat && window.MathJax) {
         console.log('开始重新渲染MathJax');
         MathJax.typesetPromise().then(() => {
-          console.log('MathJax重新渲染完成');
+          console.log('MathJax重新渲染完成 - GitHub格式公式应该正常显示了！');
         }).catch((err) => {
           console.error('MathJax渲染错误:', err);
         });
-      } else if (!foundGitHubFormat) {
+      } else {
         console.log('未找到GitHub格式公式');
       }
       
     } catch (error) {
       console.error('脚本执行出错:', error);
     }
+  }, 1000);
+});
+</script>
   }, 1000);
 });
 </script>
