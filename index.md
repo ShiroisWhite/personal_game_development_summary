@@ -19,7 +19,7 @@ title: 游戏设计思考录
 ## 📚 设计思考集
 
 ### 📊 数值设计与平衡
-[公式测试](formula-test)
+
 **1. [数值膨胀的升维破局：以明日方舟为例的长线游戏数值设计分析](01-arknights-analysis)**
 
 从升维、退环境、随机、消耗四个角度分析了明日方舟的数值膨胀控制策略，以及提出后续的改进建议。
@@ -69,8 +69,8 @@ title: 游戏设计思考录
 
 如果你对这些话题感兴趣，或想要交流游戏设计相关问题，欢迎通过以下方式联系：
 
-- 📧 Email: [bzcbzc@mail.ustc.edu.cn]
-- 🐙 GitHub: [https://github.com/ShiroisWhite]
+- 📧 Email: bzcbzc@mail.ustc.edu.cn
+- 🐙 GitHub: [https://github.com/ShiroisWhite](https://github.com/ShiroisWhite)
 
 ---
 
