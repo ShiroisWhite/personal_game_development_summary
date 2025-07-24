@@ -69,9 +69,8 @@ title: 游戏设计思考录
 
 如果你对这些话题感兴趣，或想要交流游戏设计相关问题，欢迎通过以下方式联系：
 
-- 📧 Email: [你的邮箱]
-- 💼 LinkedIn: [你的LinkedIn]
-- 🐙 GitHub: [你的GitHub主页]
+- 📧 Email: [bzcbzc@mail.ustc.edu.cn]
+- 🐙 GitHub: [https://github.com/ShiroisWhite]
 
 ---
 
