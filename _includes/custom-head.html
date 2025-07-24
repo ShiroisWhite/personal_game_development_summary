@@ -1,26 +1,38 @@
-<!-- 专门支持GitHub格式 $`公式`$ 的MathJax配置 -->
+<!-- 预处理GitHub格式公式，避免Markdown冲突 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 查找所有可能包含GitHub格式公式的元素
+  var elements = document.querySelectorAll('p, div, span, li, td, th');
+  
+  elements.forEach(function(element) {
+    var html = element.innerHTML;
+    
+    // 处理被markdown处理后的格式：$<code>公式</code>$
+    html = html.replace(/\$<code>([^<]+)<\/code>\$/g, '$$$1$');
+    
+    // 处理可能的其他变形
+    html = html.replace(/\$`([^`]+)`\$/g, '$$$1$');
+    
+    if (html !== element.innerHTML) {
+      element.innerHTML = html;
+    }
+  });
+  
+  // 重新处理MathJax
+  if (window.MathJax) {
+    MathJax.typesetPromise();
+  }
+});
+</script>
+
 <script>
 window.MathJax = {
   tex: {
-    inlineMath: [
-      ['$`', '`$'],    // GitHub格式 - 主要支持
-      ['$', '$'],      // 标准格式 - 备用
-      ['\\(', '\\)']   // 另一种标准格式
-    ],
-    displayMath: [
-      ['$$', '$$'],
-      ['\\[', '\\]']
-    ],
-    processEscapes: true,
-    processEnvironments: true
-  },
-  options: {
-    ignoreHtmlClass: 'tex2jax_ignore',
-    processHtmlClass: 'tex2jax_process'
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
   }
 };
 </script>
 
-<script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
