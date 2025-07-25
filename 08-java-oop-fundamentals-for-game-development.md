@@ -101,6 +101,7 @@ public boolean startOnce(Thing master, Integer creator) {
 ---
 
 ## 4. C语言 vs 面向对象语言对比
+结合C语言的开发经验，对面向过程和面向对象进行如下对比：
 
 ### 4.1 代码复用对比
 
@@ -200,7 +201,7 @@ void cast_skill(Skill* skill, Thing* target) {
 
 ### 6.1 性能放大效应
 
-面向对象设计中，核心方法的性能问题会被放大：
+面向对象设计中，核心方法的性能问题会被放大，如果不够高效，则会被反复调用，降低整体性能：
 
 ```java
 abstract class Effect {
@@ -215,6 +216,8 @@ abstract class Effect {
 ```
 
 ### 6.2 游戏开发中的平衡策略
+
+高频调用的环境下，不使用面向对象，而是直接实现；低频调用环境下再使用，优化代码结构，降低整体代码量。
 
 #### 高频路径（战斗核心）
 ```java
