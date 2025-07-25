@@ -18,7 +18,7 @@ title: 游戏设计思考录
 
 ## 📚 设计思考集
 
-### 📊 数值设计与平衡
+### 📊 数值设计分析及思考
 
 **1. [数值膨胀的升维破局：以明日方舟为例的长线游戏数值设计分析](01-arknights-analysis)**
 
@@ -34,21 +34,21 @@ title: 游戏设计思考录
 
 ### 🎮 系统设计理论
 
-**4. [游戏反应模式设计策略：运动反应 vs 认知反应的选择与平衡](04-reaction-mode-design.md)** 🚧 *WIP*
+**1. [游戏反应模式设计策略：运动反应 vs 认知反应的选择与平衡](04-reaction-mode-design.md)** 🚧 *WIP*
 
 从反应模式分析了两类反应类型对应的游戏风格、受众以及数值设计范式区别。
 
 ### 🤔 开发方法论
 
-**5. [前期开发与后验结果无法获取的矛盾](05-development-paradox.md)**
+**1. [前期开发与后验结果无法获取的矛盾](05-development-paradox.md)**
 
 分析了数值开发时，需要某个后验结果，但初次开发时并没有这个后验结果的困境及其解决方案。
 
 ### 🕹️ 实践项目
 
-**6. [Wireless Communication Journey](https://wvlsinvj.manus.space/)** 🌐
+**1. [Wireless Communication Journey](https://wvlsinvj.manus.space/)** 🌐
 
-使用Manus开发的网页小游戏，通俗地解释了一条信息从发送者传输到接收者的全过程及其原理。
+使用Manus开发的网页小游戏，通俗地解释了信息从发送者传输到接收者的全过程及其原理。
 
 ### 🎯 游戏体验
 
