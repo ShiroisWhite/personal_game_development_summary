@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
 {%- feed_meta -%}
 
-<!-- MathJax 数学公式渲染配置 -->
+<!-- MathJax 3.x 配置 - 兼容GitHub Pages -->
 <script>
 window.MathJax = {
   tex: {
@@ -13,21 +13,25 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true,
     processEnvironments: true,
-    packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+    packages: {'[+]': ['base', 'ams', 'noerrors', 'noundefined', 'autoload']}
   },
   options: {
     ignoreHtmlClass: 'tex2jax_ignore',
     processHtmlClass: 'tex2jax_process'
   },
+  loader: {
+    load: ['[tex]/noerrors']
+  },
   startup: {
     ready: function () {
-      console.log('MathJax 数学公式渲染器已加载');
+      console.log('MathJax 3.x 已成功加载并配置完成');
       MathJax.startup.defaultReady();
     }
   }
 };
 </script>
 
+<!-- 使用GitHub Pages推荐的MathJax CDN -->
 <script async src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 

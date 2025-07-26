@@ -16,3 +16,6 @@ kramdown:
   math_engine_opts:
     preview: true
     preview_as_code: false
+
+# GitHub Pages 数学公式支持
+math_engine: mathjax

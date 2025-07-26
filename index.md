@@ -56,6 +56,12 @@ title: 游戏设计思考录
 
 ### 🎯 游戏体验
 
+### 🧮 数学公式测试
+
+**[MathJax 数学公式测试页面](math-test)**
+
+验证网站的数学公式渲染是否正常工作。
+
 ### 📖 学习笔记
 
 **1. [Java面向对象编程核心概念总结](08-java-oop-fundamentals-for-game-development)**
