@@ -5,6 +5,68 @@
 <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
 {%- feed_meta -%}
 
+<!-- GitHub格式数学公式转换脚本 - 必须在MathJax之前执行 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('开始GitHub格式数学公式转换...');
+  
+  // 查找所有可能包含公式的元素
+  const elements = document.querySelectorAll('p, div, span, li, td, th, h1, h2, h3, h4, h5, h6');
+  let convertedCount = 0;
+  
+  elements.forEach(function(element, index) {
+    const originalHTML = element.innerHTML;
+    let newHTML = originalHTML;
+    
+    // 转换GitHub格式的行内公式：$`formula`$ -> $formula$
+    // 匹配Jekyll处理后的格式
+    newHTML = newHTML.replace(
+      /\$<code class="language-plaintext highlighter-rouge">([^<]+)<\/code>\$/g, 
+      '$$$1$$'
+    );
+    
+    // 处理其他可能的code标签格式
+    newHTML = newHTML.replace(
+      /\$<code[^>]*>([^<]+)<\/code>\$/g, 
+      '$$$1$$'
+    );
+    
+    // 检查是否有转换
+    if (newHTML !== originalHTML) {
+      console.log(`转换元素 ${index}:`, {
+        原始: originalHTML.substring(0, 100) + '...',
+        转换后: newHTML.substring(0, 100) + '...'
+      });
+      element.innerHTML = newHTML;
+      convertedCount++;
+    }
+  });
+  
+  console.log(`GitHub格式转换完成，共转换 ${convertedCount} 个元素`);
+  
+  // 转换完成后，通知MathJax重新渲染
+  if (convertedCount > 0) {
+    // 等待MathJax加载完成后再重新渲染
+    function retryMathJaxRender() {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        console.log('开始MathJax重新渲染...');
+        MathJax.typesetPromise().then(() => {
+          console.log('✅ GitHub格式数学公式转换并渲染完成！');
+        }).catch((err) => {
+          console.error('MathJax渲染错误:', err);
+        });
+      } else {
+        // 如果MathJax还没加载，等待500ms后重试
+        setTimeout(retryMathJaxRender, 500);
+      }
+    }
+    
+    // 延迟执行，确保MathJax已加载
+    setTimeout(retryMathJaxRender, 1000);
+  }
+});
+</script>
+
 <!-- MathJax 3.x 配置 - 兼容GitHub Pages -->
 <script>
 window.MathJax = {
