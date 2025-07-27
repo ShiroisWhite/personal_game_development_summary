@@ -42,7 +42,7 @@
 
 关键在于找到适合目标用户群体和商业目标的**最佳平衡点**。
 
-![反应模式数轴.png](D:\工作\personal_game_development_summary\personal_game_development_summary.git\4.1%20反应模式数轴.png)
+![反应模式数轴.png](4.1-反应模式数轴.png)
 
 ## 不同反应模式数值设计的区别
 
