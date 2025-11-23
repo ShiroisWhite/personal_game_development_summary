@@ -47,6 +47,10 @@ title: 游戏设计思考录
 
 探讨了如何避免相关性陷阱，通过严格的验证框架将数据相关性转化为可靠的因果性判断，建立游戏开发决策的科学依据。
 
+**3. [主策划团队协作心得：避免后见之明偏差与无意义行为](16-hindsight-bias-and-team-collaboration)**
+
+从认知科学角度深入剖析后见之明偏差（Hindsight Bias）的形成机制，分析为什么"事后质问替代方案"是无意义的行为，总结策划工作中的常见陷阱，并提出建立健康团队文化的实践方法。
+
 ### 🕹️ 实践项目
 
 **1. [Wireless Communication Journey](https://wvlsinvj.manus.space/)** 🌐
