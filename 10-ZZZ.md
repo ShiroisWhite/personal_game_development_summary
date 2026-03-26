@@ -1,7 +1,7 @@
 ---
 layout: page
 title: 绝区零数值体系分析
-nav_exclude: false
+nav_exclude: true
 published: false
 ---
 
