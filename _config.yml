@@ -3,6 +3,7 @@ description: 数值设计、系统策划与玩家体验的深度思考
 author: ShiroisWhite
 
 theme: minima
+header_pages: []
 markdown: kramdown
 highlighter: rouge
 
