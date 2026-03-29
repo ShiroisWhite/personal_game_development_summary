@@ -11,7 +11,7 @@ title: 自由的边界(Papers, Please AI版）
 
 ## 🕹️ 实践项目
 
-**1. [Papers Please AI版](papers-please-ai/)** 🎮
+**1. [自由的边界(Papers, Please AI版）](papers-please-ai/)** 🎮
 
 玩家扮演米国入境审查官，和AI大模型扮演的不同背景的申请人进行自由对话，决定是否放行。包含 15 名申请人、6 种结局。
 
