@@ -1,12 +1,11 @@
 ---
 layout: default
-title: 游戏设计思考录
+title: 自由的边界(Papers, Please AI版）
 ---
 
-# 游戏设计思考录
+# 自由的边界(Papers, Please AI版）
 
-> 游戏策划分析与技术学习的综合笔记
-> 涵盖数值设计、系统策划、开发方法论与编程实践
+> 以Lucas Pope开发的《Papers, please》为灵感，使用OpenClaw开发的入境审批模拟游戏。玩家扮演米国入境审查官，和AI大模型扮演的不同背景的申请人进行自由对话，决定是否放行。放行结果对游戏结局产生影响，例如拒绝过多留学生导致科技停滞。
 
 ---
 
@@ -14,7 +13,7 @@ title: 游戏设计思考录
 
 **1. [Papers Please AI版](papers-please-ai/)** 🎮
 
-使用 HTML5 + JavaScript + GPT API 开发的签证审批模拟游戏。玩家扮演签证官，在 GPT 扮演的申请人和现实世界偏见之间做出判断，包含 15 名申请人、6 种结局以及追求政治正确的评分挑战。
+玩家扮演米国入境审查官，和AI大模型扮演的不同背景的申请人进行自由对话，决定是否放行。包含 15 名申请人、6 种结局。
 
 **2. [Wireless Communication Journey](https://wvlsinvj.manus.space/)** 🌐
 
