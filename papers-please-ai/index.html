@@ -1,0 +1,3452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自由的边界 · Papers Please AI版</title>
+  <style>
+    /* ========== 全局样式 ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1a2332;
+      --secondary: #2d3a4f;
+      --accent: #c9a84c;
+      --bg: #f5f0e8;
+      --text: #1a2332;
+      --text-light: #6b7280;
+      --white: #ffffff;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --border: #d1d5db;
+    }
+
+    body {
+      font-family: "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ========== 顶部状态栏 ========== */
+    .topbar {
+      background: var(--primary);
+      color: var(--white);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .day-badge {
+      background: var(--accent);
+      color: var(--primary);
+      padding: 6px 16px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .save-btn {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .save-btn:hover {
+      background: var(--accent);
+      color: var(--primary);
+    }
+
+    /* 轨迹条 */
+    .trajectory-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .trajectory-label {
+      min-width: 60px;
+      text-align: right;
+    }
+
+    .trajectory-bar {
+      width: 100px;
+      height: 8px;
+      background: var(--secondary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .trajectory-fill {
+      height: 100%;
+      transition: width 0.5s ease;
+      border-radius: 4px;
+    }
+
+    .trajectory-fill.nat-sec { background: var(--danger); }
+    .trajectory-fill.humanitarian { background: var(--success); }
+    .trajectory-fill.efficiency { background: var(--accent); }
+
+    .trajectory-value {
+      min-width: 28px;
+      font-weight: bold;
+    }
+
+    /* ========== 主内容区 ========== */
+    .main-content {
+      margin-top: 60px;
+      padding: 24px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ========== 视图容器 ========== */
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* ========== intro 视图 (API Key 输入) ========== */
+    .intro-container {
+      min-height: calc(100vh - 60px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .intro-box {
+      background: var(--white);
+      border-radius: 8px;
+      padding: 48px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .intro-box h1 {
+      color: var(--primary);
+      margin-bottom: 8px;
+      font-size: 28px;
+    }
+
+    .intro-box .subtitle {
+      color: var(--text-light);
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+
+    .intro-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      font-size: 16px;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .intro-box input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .intro-box .hint {
+      color: var(--text-light);
+      font-size: 12px;
+      margin-bottom: 24px;
+    }
+
+    .intro-box button {
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .intro-box button:hover {
+      background: var(--secondary);
+    }
+
+    /* ========== Briefing 视图 (早晨简报) ========== */
+    .briefing-card {
+      background: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .briefing-header {
+      background: var(--primary);
+      color: var(--white);
+      padding: 20px 24px;
+    }
+
+    .briefing-header h2 {
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .briefing-body {
+      padding: 24px;
+    }
+
+    .briefing-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .briefing-stat {
+      background: var(--bg);
+      padding: 16px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .briefing-stat .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .briefing-stat .label {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .briefing-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+
+    .briefing-focus {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .briefing-focus h4 {
+      color: #92400e;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .briefing-focus p {
+      color: #78350f;
+      font-size: 14px;
+    }
+
+    .briefing-events {
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .briefing-events h4 {
+      color: #991b1b;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .briefing-events p {
+      color: #7f1d1d;
+      font-size: 14px;
+    }
+
+    .briefing-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 12px 32px;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--secondary);
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      padding: 12px 32px;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    /* ========== Interview 视图 (面谈) ========== */
+    .interview-container {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 24px;
+      height: calc(100vh - 120px);
+    }
+
+    .applicant-card {
+      background: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .applicant-header {
+      background: var(--primary);
+      color: var(--white);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .applicant-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--secondary);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border: 3px solid var(--accent);
+    }
+
+    .applicant-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .applicant-type {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .applicant-body {
+      padding: 16px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .applicant-info {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+
+    .applicant-info p {
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .applicant-docs {
+      background: var(--bg);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+
+    .applicant-docs h5 {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .doc-tag {
+      display: inline-block;
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin: 2px;
+    }
+
+    .applicant-materials {
+      font-size: 13px;
+    }
+
+    .applicant-materials h5 {
+      color: var(--text-light);
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .material-item {
+      margin-bottom: 8px;
+      padding: 8px;
+      background: var(--bg);
+      border-radius: 4px;
+    }
+
+    .material-item .label {
+      color: var(--text-light);
+      font-size: 12px;
+    }
+
+    .material-item .value {
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .material-report-section {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .material-report-section h5 {
+      cursor: pointer;
+      user-select: none;
+      font-size: 13px;
+      color: var(--primary);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .material-report-section h5:hover {
+      opacity: 0.8;
+    }
+
+    #report-toggle-icon {
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+
+    #report-toggle-icon.expanded {
+      transform: rotate(180deg);
+    }
+
+    .material-report-content {
+      margin-top: 8px;
+      padding: 10px;
+      background: #fef3c7;
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #92400e;
+      white-space: pre-wrap;
+    }
+
+    /* 聊天面板 */
+    .chat-panel {
+      background: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: var(--primary);
+      color: var(--white);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .time-budget {
+      background: var(--accent);
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      max-width: 80%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.npc {
+      align-self: flex-start;
+    }
+
+    .message.player {
+      align-self: flex-end;
+    }
+
+    .message-content {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message.npc .message-content {
+      background: var(--bg);
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.player .message-content {
+      background: var(--primary);
+      color: var(--white);
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-meta {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .emotion-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .emotion-tag.calm { background: #d1fae5; color: #065f46; }
+    .emotion-tag.nervous { background: #fef3c7; color: #92400e; }
+    .emotion-tag.defensive { background: #fed7aa; color: #9a3412; }
+    .emotion-tag.evasive { background: #fecaca; color: #991b1b; }
+    .emotion-tag.hostile { background: #ef4444; color: #ffffff; }
+
+    /* 打字提示动画 */
+    .typing-content {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 16px;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background: #9ca3af;
+      border-radius: 50%;
+      animation: typing-bounce 1.4s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing-bounce {
+      0%, 80%, 100% {
+        transform: scale(0.6);
+        opacity: 0.5;
+      }
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .clue-alert {
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: #991b1b;
+    }
+
+    .message-translation {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 6px;
+      padding: 8px 12px;
+      background: #f0f9ff;
+      border-radius: 6px;
+      border-left: 3px solid #3b82f6;
+      font-style: italic;
+    }
+
+    .suggested-questions {
+      padding: 12px 16px;
+      background: #fafafa;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+
+    .suggested-questions.active {
+      display: block;
+    }
+
+    .suggested-questions-label {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .suggested-questions-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .suggestion-btn {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .suggestion-btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .suggestion-btn:hover .suggestion-zh {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .suggestion-zh {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .chat-input-area {
+      padding: 16px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .btn-send {
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .btn-send:hover {
+      background: var(--secondary);
+    }
+
+    .btn-send:disabled {
+      background: var(--text-light);
+      cursor: not-allowed;
+    }
+
+    .chat-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-check {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+
+    .btn-check:hover {
+      background: #2563eb;
+    }
+
+    .btn-check:disabled {
+      background: var(--text-light);
+      cursor: not-allowed;
+    }
+
+    .btn-approve {
+      background: var(--success);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+
+    .btn-approve:hover {
+      background: #15803d;
+    }
+
+    .btn-reject {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+
+    .btn-reject:hover {
+      background: #b91c1c;
+    }
+
+    /* ========== Judgment 视图 ========== */
+    .judgment-card {
+      background: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .judgment-header {
+      padding: 24px;
+      text-align: center;
+    }
+
+    .judgment-header h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .judgment-header .decision {
+      font-size: 18px;
+      font-weight: bold;
+      padding: 8px 24px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .judgment-header .decision.approved {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .judgment-header .decision.rejected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .judgment-body {
+      padding: 24px;
+    }
+
+    .judgment-section {
+      margin-bottom: 20px;
+    }
+
+    .judgment-section h4 {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .judgment-section p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .judgment-result {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+
+    .judgment-result.correct {
+      background: #d1fae5;
+      border: 1px solid #10b981;
+    }
+
+    .judgment-result.wrong {
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+    }
+
+    .judgment-result h4 {
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .judgment-result.correct h4 { color: #065f46; }
+    .judgment-result.wrong h4 { color: #991b1b; }
+
+    .trajectory-changes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .trajectory-change {
+      text-align: center;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: 6px;
+    }
+
+    .trajectory-change .label {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .trajectory-change .delta {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .trajectory-change .delta-up { color: var(--success); }
+    .trajectory-change .delta-down { color: var(--danger); }
+    .trajectory-change .delta-zero { color: var(--text-light); }
+
+    .judgment-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    /* ========== DayEnd 视图 ========== */
+    .dayend-card {
+      background: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .dayend-header {
+      background: var(--primary);
+      color: var(--white);
+      padding: 20px 24px;
+      text-align: center;
+    }
+
+    .dayend-header h2 {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .dayend-body {
+      padding: 24px;
+    }
+
+    .dayend-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dayend-stat {
+      text-align: center;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 6px;
+    }
+
+    .dayend-stat .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .dayend-stat .label {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .dayend-trajectories {
+      margin-bottom: 24px;
+    }
+
+    .dayend-trajectory {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .dayend-trajectory .label {
+      width: 80px;
+      font-size: 13px;
+    }
+
+    .dayend-trajectory .bar {
+      flex: 1;
+      height: 12px;
+      background: var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .dayend-trajectory .bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.5s;
+    }
+
+    .dayend-trajectory .bar-fill.nat-sec { background: var(--danger); }
+    .dayend-trajectory .bar-fill.humanitarian { background: var(--success); }
+    .dayend-trajectory .bar-fill.efficiency { background: var(--accent); }
+
+    .dayend-trajectory .value {
+      width: 80px;
+      text-align: right;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .dayend-narrative {
+      background: var(--bg);
+      border-radius: 6px;
+      padding: 16px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .dayend-events {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .dayend-events h4 {
+      color: #92400e;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .dayend-events p {
+      color: #78350f;
+      font-size: 13px;
+    }
+
+    .dayend-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    /* ========== GameOver 视图 ========== */
+    .gameover-card {
+      background: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .gameover-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .gameover-header h2 {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .gameover-header .subtitle {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .gameover-body {
+      padding: 24px;
+    }
+
+    .gameover-scores {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .score-card {
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .score-card.nat-sec { background: #fee2e2; }
+    .score-card.humanitarian { background: #d1fae5; }
+    .score-card.efficiency { background: #fef3c7; }
+
+    .score-card .label {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .score-card.nat-sec .label { color: #991b1b; }
+    .score-card.humanitarian .label { color: #065f46; }
+    .score-card.efficiency .label { color: #92400e; }
+
+    .score-card .score {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .score-card .title {
+      font-size: 13px;
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    .gameover-total {
+      text-align: center;
+      padding: 24px;
+      background: var(--bg);
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    .gameover-total .label {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .gameover-total .value {
+      font-size: 48px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .gameover-total .rating {
+      font-size: 18px;
+      margin-top: 8px;
+      color: var(--accent);
+    }
+
+    .gameover-history {
+      margin-bottom: 24px;
+    }
+
+    .gameover-history h4 {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 12px;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: var(--bg);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .history-item .day {
+      color: var(--text-light);
+    }
+
+    .history-item .result {
+      font-weight: bold;
+    }
+
+    .history-item .result.correct { color: var(--success); }
+    .history-item .result.wrong { color: var(--danger); }
+
+    .gameover-narrative {
+      background: var(--bg);
+      border-radius: 6px;
+      padding: 20px;
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .gameover-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    /* ========== Toast ========== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: var(--white);
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      z-index: 1000;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translate(-50%, 20px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    /* ========== Loading ========== */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .loading-box {
+      background: var(--white);
+      padding: 32px 48px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ========== Modal ========== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: var(--white);
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 16px;
+      font-size: 18px;
+    }
+
+    .modal-content pre {
+      background: var(--bg);
+      padding: 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    /* ========== Reject Modal ========== */
+    .reject-modal textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+
+    .reject-modal textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    /* ========== History Panel ========== */
+    .history-panel {
+      position: fixed;
+      right: -350px;
+      top: 60px;
+      bottom: 0;
+      width: 350px;
+      background: var(--white);
+      box-shadow: -2px 0 12px rgba(0,0,0,0.1);
+      z-index: 99;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .history-panel.open {
+      right: 0;
+    }
+
+    .history-panel h3 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .history-toggle {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      z-index: 98;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== 顶部状态栏 ========== -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="day-badge" id="day-badge">DAY 1</div>
+      <span style="font-size: 14px; opacity: 0.8;">自由的边界 · Papers Please AI版</span>
+    </div>
+    <div class="topbar-right">
+      <div class="trajectory-item">
+        <span class="trajectory-label">国安</span>
+        <div class="trajectory-bar">
+          <div class="trajectory-fill nat-sec" id="traj-nat-sec" style="width: 50%"></div>
+        </div>
+        <span class="trajectory-value" id="val-nat-sec">50</span>
+      </div>
+      <div class="trajectory-item">
+        <span class="trajectory-label">人道</span>
+        <div class="trajectory-bar">
+          <div class="trajectory-fill humanitarian" id="traj-humanitarian" style="width: 50%"></div>
+        </div>
+        <span class="trajectory-value" id="val-humanitarian">50</span>
+      </div>
+      <div class="trajectory-item">
+        <span class="trajectory-label">效率</span>
+        <div class="trajectory-bar">
+          <div class="trajectory-fill efficiency" id="traj-efficiency" style="width: 50%"></div>
+        </div>
+        <span class="trajectory-value" id="val-efficiency">50</span>
+      </div>
+      <button class="save-btn" onclick="toggleHistory()">📜 记录</button>
+      <button class="save-btn" onclick="saveGame()">💾 存档</button>
+      <button class="save-btn" onclick="loadGame()">📂 读档</button>
+    </div>
+  </div>
+
+  <!-- ========== 主内容区 ========== -->
+  <div class="main-content">
+
+    <!-- INTRO 视图 -->
+    <div id="view-intro" class="view active">
+      <div class="intro-container">
+        <div class="intro-box">
+          <h1>自由的边界</h1>
+          <p class="subtitle">Papers Please AI版</p>
+          <p style="margin-bottom: 24px; color: var(--text-light); font-size: 14px;">
+            你是美国机场的入境审查官。每天，无数旅客走过你的检查窗口，<br>
+            他们的命运握在你的手中。<br>
+            每个人都有自己的故事，而你只能在有限的信息中做出判断。
+          </p>
+          <button onclick="startGame()">开始游戏</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRIEFING 视图 -->
+    <div id="view-briefing" class="view">
+      <div class="briefing-card">
+        <div class="briefing-header">
+          <h2>📋 DAY <span id="brief-day">1</span> · 自由的边界 · Papers Please AI版</h2>
+        </div>
+        <div class="briefing-body">
+          <div class="briefing-stats">
+            <div class="briefing-stat">
+              <div class="value" id="brief-processed">0</div>
+              <div class="label">昨日处理</div>
+            </div>
+            <div class="briefing-stat">
+              <div class="value" id="brief-accuracy">--%</div>
+              <div class="label">准确率</div>
+            </div>
+            <div class="briefing-stat">
+              <div class="value" id="brief-backlog">0</div>
+              <div class="label">当前积压</div>
+            </div>
+          </div>
+
+          <div class="briefing-divider"></div>
+
+          <div class="briefing-focus" id="briefing-focus">
+            <h4>📌 今日重点关注</h4>
+            <p id="briefing-focus-text">按标准流程审核</p>
+          </div>
+
+          <div class="briefing-events" id="briefing-events" style="display: none;">
+            <h4>🚨 政策变化</h4>
+            <p id="briefing-events-text"></p>
+          </div>
+
+          <div class="briefing-actions">
+            <button class="btn-primary" onclick="startDay()">开始今日工作</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERVIEW 视图 -->
+    <div id="view-interview" class="view">
+      <div class="interview-container">
+        <!-- 左侧申请人卡片 -->
+        <div class="applicant-card">
+          <div class="applicant-header">
+            <div class="applicant-avatar" id="applicant-avatar">👤</div>
+            <div class="applicant-name" id="applicant-name">--</div>
+            <div class="applicant-type" id="applicant-type">--</div>
+          </div>
+          <div class="applicant-body">
+            <div class="applicant-info" id="applicant-info">
+              <p><span>国籍：</span><span id="app-nationality">--</span></p>
+              <p><span>年龄：</span><span id="app-age">--</span></p>
+              <p><span>申请类型：</span><span id="app-visa-type">--</span></p>
+              <p><span>职业：</span><span id="app-occupation">--</span></p>
+            </div>
+            <div class="applicant-docs">
+              <h5>提交材料</h5>
+              <div id="app-docs-tags"></div>
+            </div>
+            <div class="applicant-materials">
+              <h5>申请详情</h5>
+              <div class="material-item">
+                <div class="label">目的</div>
+                <div class="value" id="app-purpose">--</div>
+              </div>
+              <div class="material-item">
+                <div class="label">资金</div>
+                <div class="value" id="app-funds">--</div>
+              </div>
+              <div class="material-item">
+                <div class="label">邀请方</div>
+                <div class="value" id="app-org">--</div>
+              </div>
+              <div class="material-item">
+                <div class="label">出行记录</div>
+                <div class="value" id="app-travel">--</div>
+              </div>
+            </div>
+            <!-- 材料审查报告（可展开） -->
+            <div class="material-report-section" id="material-report-section" style="display: none;">
+              <h5 onclick="toggleMaterialReport()">📋 材料审查报告 <span id="report-toggle-icon">▼</span></h5>
+              <div class="material-report-content" id="material-report-content" style="display: none;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧聊天面板 -->
+        <div class="chat-panel">
+          <div class="chat-header">
+            <span>💬 面谈中</span>
+            <span class="time-budget">剩余提问：<span id="time-budget">5</span> 次</span>
+          </div>
+          <div class="chat-messages" id="chat-messages"></div>
+          <div class="suggested-questions" id="suggested-questions"></div>
+          <div class="chat-input-area">
+            <div class="chat-input-row">
+              <input type="text" class="chat-input" id="chat-input" placeholder="输入你的问题..." onkeypress="handleKeyPress(event)">
+              <button class="btn-send" id="btn-send" onclick="sendMessage()">发送</button>
+            </div>
+            <div class="chat-actions">
+              <button class="btn-check" id="btn-check" onclick="checkMaterials()">📄 查材料 (消耗2次提问机会)</button>
+              <button class="btn-approve" onclick="submitDecision('approved')">✓ 通过</button>
+              <button class="btn-reject" onclick="showRejectModal()">✗ 拒绝</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JUDGMENT 视图 -->
+    <div id="view-judgment" class="view">
+      <div class="judgment-card">
+        <div class="judgment-header">
+          <h2>📋 判定结果</h2>
+          <div class="decision" id="judgment-decision">通过</div>
+        </div>
+        <div class="judgment-body">
+          <div class="judgment-section">
+            <h4>申请人真实情况</h4>
+            <div class="judgment-result" id="judgment-result">
+              <h4 id="judgment-result-title">准确判断</h4>
+              <p id="judgment-result-text"></p>
+            </div>
+          </div>
+          <div class="judgment-section">
+            <h4>轨迹变化</h4>
+            <div class="trajectory-changes" id="trajectory-changes"></div>
+          </div>
+          <div class="judgment-actions">
+            <button class="btn-primary" onclick="nextApplicant()">下一位申请人</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAYEND 视图 -->
+    <div id="view-dayend" class="view">
+      <div class="dayend-card">
+        <div class="dayend-header">
+          <h2>DAY <span id="dayend-day">1</span> 结束</h2>
+          <p>每日结算报告</p>
+        </div>
+        <div class="dayend-body">
+          <div class="dayend-stats">
+            <div class="dayend-stat">
+              <div class="value" id="dayend-processed">0</div>
+              <div class="label">今日处理</div>
+            </div>
+            <div class="dayend-stat">
+              <div class="value" id="dayend-correct">0</div>
+              <div class="label">正确判断</div>
+            </div>
+            <div class="dayend-stat">
+              <div class="value" id="dayend-accuracy">--%</div>
+              <div class="label">准确率</div>
+            </div>
+            <div class="dayend-stat">
+              <div class="value" id="dayend-remaining">0</div>
+              <div class="label">剩余申请人</div>
+            </div>
+          </div>
+
+          <div class="dayend-trajectories" id="dayend-trajectories"></div>
+
+          <div class="dayend-narrative" id="dayend-narrative"></div>
+
+          <div class="dayend-events" id="dayend-events" style="display: none;">
+            <h4>📌 政策变化提醒</h4>
+            <p id="dayend-events-text"></p>
+          </div>
+
+          <div class="dayend-actions">
+            <button class="btn-primary" onclick="nextDay()">进入 DAY <span id="next-day-num">2</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAMEOVER 视图 -->
+    <div id="view-gameover" class="view">
+      <div class="gameover-card">
+        <div class="gameover-header">
+          <h2>📋 自由的边界 · Papers Please AI版 任期评定报告</h2>
+          <p class="subtitle">任期结束 · 综合评定</p>
+        </div>
+        <div class="gameover-body">
+          <div class="gameover-scores">
+            <div class="score-card nat-sec">
+              <div class="label">国安防线</div>
+              <div class="score" id="final-nat-sec">50</div>
+              <div class="title" id="final-nat-sec-title">--</div>
+            </div>
+            <div class="score-card humanitarian">
+              <div class="label">人道主义</div>
+              <div class="score" id="final-humanitarian">50</div>
+              <div class="title" id="final-humanitarian-title">--</div>
+            </div>
+            <div class="score-card efficiency">
+              <div class="label">行政效率</div>
+              <div class="score" id="final-efficiency">50</div>
+              <div class="title" id="final-efficiency-title">--</div>
+            </div>
+          </div>
+
+          <div class="gameover-total">
+            <div class="label">综合评定</div>
+            <div class="value" id="final-total">50</div>
+            <div class="rating" id="final-rating">--</div>
+          </div>
+
+          <div class="gameover-history" id="gameover-history">
+            <h4>📜 关键案例回顾</h4>
+          </div>
+
+          <div class="gameover-narrative" id="gameover-narrative"></div>
+
+          <div class="gameover-actions">
+            <button class="btn-primary" onclick="restartGame()">重新开始</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== 历史记录面板 ========== -->
+  <div class="history-panel" id="history-panel">
+    <h3>📜 审批记录</h3>
+    <div id="history-list"></div>
+  </div>
+  <button class="history-toggle" onclick="toggleHistory()">📜</button>
+
+  <!-- ========== Toast ========== -->
+  <div id="toast" class="toast" style="display: none;"></div>
+
+  <!-- ========== Loading ========== -->
+  <div id="loading" class="loading-overlay" style="display: none;">
+    <div class="loading-box">
+      <div class="loading-spinner"></div>
+      <div id="loading-text">自由的边界 · Papers Please AI版 思考中...</div>
+    </div>
+  </div>
+
+  <!-- ========== 查材料 Modal ========== -->
+  <div id="material-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>📄 材料审查报告</h3>
+      <pre id="material-report">分析中...</pre>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeMaterialModal()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 拒绝 Modal ========== -->
+  <div id="reject-modal" class="modal-overlay reject-modal" style="display: none;">
+    <div class="modal-content">
+      <h3>✗ 拒绝理由</h3>
+      <textarea id="reject-reason" placeholder="请输入拒绝理由（将影响判定准确性）"></textarea>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeRejectModal()">取消</button>
+        <button class="btn-reject" onclick="submitReject()">确认拒绝</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 外部数据引入 ========== -->
+  <script src="data/applicants.js"></script>
+  <script src="data/events.js"></script>
+
+  <script>
+    // ========== 配置 ==========
+    const CONFIG = {
+      API_URL: "https://api.siliconflow.cn/v1/chat/completions",
+      MODEL: "deepseek-ai/DeepSeek-V3",
+      API_KEY: "sk-pisgdenzcpdpbzkilslffmostkstexeoqpnlzjetzduegqrt",
+      MAX_TIME_PER_APPLICANT: 5,
+      MATERIAL_CHECK_COST: 2,
+      MAX_DAY: 10,
+      SAVE_KEY: "visa_officer_save",
+      TRAJECTORY_WEIGHTS: {
+        nationalSecurity: 0.4,
+        humanitarian: 0.3,
+        efficiency: 0.3
+      },
+      getApiKey: () => {
+        return CONFIG.API_KEY;
+      }
+    };
+
+    // ========== 游戏状态 ==========
+    let state = {};
+
+    function initState() {
+      state = {
+        phase: "intro",
+        day: 1,
+        today: {
+          timeBudget: CONFIG.MAX_TIME_PER_APPLICANT,
+          applicants: [],
+          currentApplicantId: null,
+          currentConversation: [],
+          applicantAnswerCount: 0
+        },
+        stats: {
+          nationalSecurity: 50,
+          humanitarian: 50,
+          efficiency: 50,
+          totalProcessed: 0,
+          correctJudgments: 0,
+          falsePositives: 0,
+          falseNegatives: 0
+        },
+        policy: {
+          immigrationTone: 0,
+          studentTone: 0,
+          currentEvents: []
+        },
+        history: []
+      };
+    }
+
+    // ========== 工具函数 ==========
+    function clamp(val, min, max) {
+      return Math.max(min, Math.min(max, val));
+    }
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 2500);
+    }
+
+    function showLoading(text = "自由的边界 · Papers Please AI版 思考中...") {
+      document.getElementById("loading-text").textContent = text;
+      document.getElementById("loading").style.display = "flex";
+    }
+
+    function hideLoading() {
+      document.getElementById("loading").style.display = "none";
+    }
+
+    // ========== 界面更新 ==========
+    function setPhase(newPhase) {
+      state.phase = newPhase;
+      document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+      document.getElementById(`view-${newPhase}`).classList.add("active");
+      updateTopBar();
+    }
+
+    function updateTopBar() {
+      document.getElementById("day-badge").textContent = `DAY ${state.day}`;
+      updateTrajectoryBar("nat-sec", state.stats.nationalSecurity);
+      updateTrajectoryBar("humanitarian", state.stats.humanitarian);
+      updateTrajectoryBar("efficiency", state.stats.efficiency);
+    }
+
+    function updateTrajectoryBar(id, value) {
+      const bar = document.getElementById(`traj-${id}`);
+      const val = document.getElementById(`val-${id}`);
+      if (bar) bar.style.width = `${value}%`;
+      if (val) val.textContent = Math.round(value);
+    }
+
+    // ========== 游戏流程 ==========
+    function startGame() {
+      try {
+        console.log("Starting game...");
+        initState();
+        setPhase("briefing");
+        updateBriefing();
+        console.log("Game started successfully");
+      } catch (e) {
+        console.error("startGame error:", e);
+        alert("启动游戏出错: " + e.message);
+      }
+    }
+
+    function loadGame() {
+      const saved = localStorage.getItem(CONFIG.SAVE_KEY);
+      if (!saved) {
+        showToast("没有找到存档");
+        return;
+      }
+      try {
+        state = JSON.parse(saved);
+        showToast("读档成功");
+        setPhase("briefing");
+        updateBriefing();
+      } catch (e) {
+        showToast("存档损坏");
+      }
+    }
+
+    function saveGame() {
+      localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify(state));
+      showToast("存档成功");
+    }
+
+    function autoSave() {
+      localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify(state));
+    }
+
+    // ========== 更新操作按钮状态 ==========
+    function updateActionButtons() {
+      const timeBudget = state.today?.timeBudget || 0;
+      const sendBtn = document.getElementById("btn-send");
+      const checkBtn = document.getElementById("btn-check");
+
+      if (timeBudget <= 0) {
+        // 提问次数用完：禁用发送和查材料，只保留通过/拒绝
+        if (sendBtn) sendBtn.disabled = true;
+        if (checkBtn) checkBtn.disabled = true;
+      } else {
+        if (sendBtn) sendBtn.disabled = false;
+        if (checkBtn) checkBtn.disabled = false;
+      }
+    }
+
+    function updateBriefing() {
+      document.getElementById("brief-day").textContent = state.day;
+
+      // 昨日数据
+      const yesterday = state.history.filter(h => h.day === state.day - 1);
+      document.getElementById("brief-processed").textContent = yesterday.length || state.stats.totalProcessed;
+
+      const totalWithResult = state.stats.totalProcessed;
+      const accuracy = totalWithResult > 0
+        ? Math.round((state.stats.correctJudgments / totalWithResult) * 100)
+        : 0;
+      document.getElementById("brief-accuracy").textContent = totalWithResult > 0 ? `${accuracy}%` : "--%";
+
+      document.getElementById("brief-backlog").textContent = state.today.applicants?.length || 0;
+
+      // 今日重点
+      const immigrationText = {
+        "-3": "极其严格，严查所有移民倾向迹象",
+        "-2": "相当严格，重点审查高风险申请人",
+        "-1": "略有收紧，对可疑情形从严掌握",
+        "0": "标准审核",
+        "+1": "略有放宽，对真实申请人给予更多信任",
+        "+2": "相当宽松，整体放行率偏高",
+        "+3": "极为宽松，基本畅通"
+      }[String(state.policy.immigrationTone)] || "标准审核";
+
+      const studentText = {
+        "-3": "全面封堵，STEM 专业一律从严",
+        "-2": "重点审查，研究背景和资金来源必查",
+        "-1": "适度从严",
+        "0": "标准审核",
+        "+1": "适度放宽",
+        "+2": "相当宽松",
+        "+3": "几乎不审"
+      }[String(state.policy.studentTone)] || "标准审核";
+
+      let focusText = `移民倾向审核：${immigrationText}<br>留学生审核：${studentText}`;
+      if (state.policy.currentEvents.length > 0) {
+        focusText += "<br><br>今日政策变化：<br>" + state.policy.currentEvents.map(e => e.headline).join("<br>");
+      }
+      document.getElementById("briefing-focus-text").innerHTML = focusText;
+
+      // 政策变化提醒
+      if (state.policy.currentEvents.length > 0) {
+        document.getElementById("briefing-events").style.display = "block";
+        document.getElementById("briefing-events-text").textContent =
+          state.policy.currentEvents.map(e => e.body).join("\n\n");
+      } else {
+        document.getElementById("briefing-events").style.display = "none";
+      }
+
+      updateTopBar();
+    }
+
+    function startDay() {
+      try {
+        console.log("Starting day...", APPLICANTS);
+        // 抽取当天申请人
+        const count = 3 + Math.floor(Math.random() * 3);
+        state.today.applicants = shuffleArray(APPLICANTS.map(a => a.id)).slice(0, count);
+        state.today.timeBudget = CONFIG.MAX_TIME_PER_APPLICANT;
+        state.today.currentApplicantId = null;
+        state.today.currentConversation = [];
+
+        // 检查政策事件
+        checkPolicyEvents();
+
+        startNextApplicant();
+        console.log("Day started");
+      } catch (e) {
+        console.error("startDay error:", e);
+        alert("开始工作出错: " + e.message);
+      }
+    }
+
+    function checkPolicyEvents() {
+      state.policy.currentEvents = [];
+
+      // 随机事件
+      if (Math.random() < 0.15) {
+        const randomEvent = EVENTS.find(e => e.id === "EV12");
+        if (randomEvent) {
+          applyEventEffect(randomEvent);
+          state.policy.currentEvents.push(randomEvent);
+        }
+      }
+
+      // 检查其他触发条件
+      for (const event of EVENTS) {
+        if (event.id === "EV12") continue;
+        if (event.id === "EV14" && state.day === 5) {
+          applyEventEffect(event);
+          state.policy.currentEvents.push(event);
+          continue;
+        }
+        if (event.id === "EV15" && state.day === CONFIG.MAX_DAY) {
+          continue; // 游戏结束时单独处理
+        }
+
+        if (evaluateTrigger(event.trigger, state)) {
+          applyEventEffect(event);
+          state.policy.currentEvents.push(event);
+        }
+      }
+    }
+
+    function evaluateTrigger(trigger, state) {
+      if (typeof trigger.checkFn === "function") {
+        return trigger.checkFn(state);
+      }
+      try {
+        return new Function("state", `with(state) { return ${trigger.checkFn}; }`)(state);
+      } catch {
+        return false;
+      }
+    }
+
+    function applyEventEffect(event) {
+      if (event.effect.nationalSecurity !== undefined) {
+        state.stats.nationalSecurity = clamp(
+          state.stats.nationalSecurity + event.effect.nationalSecurity, 0, 100
+        );
+      }
+      if (event.effect.humanitarian !== undefined) {
+        state.stats.humanitarian = clamp(
+          state.stats.humanitarian + event.effect.humanitarian, 0, 100
+        );
+      }
+      if (event.effect.efficiency !== undefined) {
+        state.stats.efficiency = clamp(
+          state.stats.efficiency + event.effect.efficiency, 0, 100
+        );
+      }
+      if (event.effect.immigrationTone !== undefined) {
+        state.policy.immigrationTone = clamp(
+          state.policy.immigrationTone + event.effect.immigrationTone, -3, 3
+        );
+      }
+      if (event.effect.studentTone !== undefined) {
+        state.policy.studentTone = clamp(
+          state.policy.studentTone + event.effect.studentTone, -3, 3
+        );
+      }
+    }
+
+    function startNextApplicant() {
+      if (state.today.applicants.length === 0) {
+        endDay();
+        return;
+      }
+
+      const nextId = state.today.applicants.shift();
+      const applicant = APPLICANTS.find(a => a.id === nextId);
+      if (!applicant) {
+        startNextApplicant();
+        return;
+      }
+
+      state.today.currentApplicantId = nextId;
+      state.today.currentConversation = [
+        { role: "npc", text: applicant.openingStatement }
+      ];
+      state.today.timeBudget = CONFIG.MAX_TIME_PER_APPLICANT;
+      state.today.applicantAnswerCount = 0;
+      state.today.materialReport = null; // 重置材料报告
+
+      renderApplicant(applicant);
+      updateActionButtons(); // 重置按钮状态
+      setPhase("interview");
+    }
+
+    function renderApplicant(applicant) {
+      // 头像
+      const avatarEl = document.getElementById("applicant-avatar");
+      if (applicant.gender === "F") {
+        avatarEl.textContent = "👩";
+      } else {
+        avatarEl.textContent = "👨";
+      }
+
+      document.getElementById("applicant-name").textContent = applicant.name;
+      document.getElementById("applicant-type").textContent = `${applicant.visaType} · ${applicant.nationality}`;
+
+      document.getElementById("app-nationality").textContent = applicant.nationality;
+      document.getElementById("app-age").textContent = applicant.age;
+      document.getElementById("app-visa-type").textContent = applicant.visaType;
+      document.getElementById("app-occupation").textContent = applicant.application.statedOccupation;
+
+      // 材料标签
+      const docsTags = document.getElementById("app-docs-tags");
+      docsTags.innerHTML = applicant.application.supportingDocs
+        .map(d => `<span class="doc-tag">${d}</span>`)
+        .join("");
+
+      document.getElementById("app-purpose").textContent = applicant.application.statedPurpose;
+      document.getElementById("app-funds").textContent = applicant.application.statedFunds;
+      document.getElementById("app-org").textContent = applicant.application.invitationOrg || "无";
+      document.getElementById("app-travel").textContent = applicant.application.travelHistory.join(", ") || "无";
+
+      document.getElementById("time-budget").textContent = state.today.timeBudget;
+
+      // 重置材料报告区域
+      const reportSection = document.getElementById("material-report-section");
+      const reportContent = document.getElementById("material-report-content");
+      const reportIcon = document.getElementById("report-toggle-icon");
+      if (reportSection) reportSection.style.display = "none";
+      if (reportContent) reportContent.style.display = "none";
+      if (reportIcon) reportIcon.classList.remove("expanded");
+
+      // 如果有已保存的材料报告，显示它
+      if (state.today.materialReport) {
+        updateMaterialReportSection(state.today.materialReport);
+      }
+
+      // 清空对话
+      const chatMessages = document.getElementById("chat-messages");
+      chatMessages.innerHTML = "";
+      document.getElementById("suggested-questions").classList.remove("active");
+
+      // 显示开场白（需要翻译）
+      translateAndShowOpening(applicant.openingStatement);
+
+      // 初始生成建议问题
+      if (state.today.timeBudget > 0) {
+        generateSuggestedQuestions().then(questions => {
+          showSuggestedQuestions(questions);
+        });
+      }
+    }
+
+    async function translateAndShowOpening(text) {
+      // 显示打字提示
+      showTypingIndicator();
+
+      // 翻译成英文（如果原文是中文）或直接获取英文版本
+      const englishText = await translateToEnglish(text);
+      const chineseTranslation = await translateText(englishText);
+
+      // 隐藏打字提示
+      hideTypingIndicator();
+
+      // 显示英文原文，翻译是中文
+      appendChatBubble("npc", englishText, null, null, chineseTranslation);
+    }
+
+    async function translateToEnglish(text) {
+      const apiKey = CONFIG.getApiKey();
+      if (!apiKey) return text;
+
+      // 如果文本看起来是英文，直接返回
+      if (/^[a-zA-Z\s\d,.?!'\"-]+$/.test(text) && text.length > 20) {
+        return text;
+      }
+
+      const prompt = `Translate the following Chinese text to English. Only return the English translation, no other text.
+
+Text: ${text}
+
+Return JSON format: {"english":"English translation"}`;
+
+      try {
+        const response = await fetch(CONFIG.API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: CONFIG.MODEL,
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.3
+          })
+        });
+
+        if (!response.ok) return text;
+
+        const data = await response.json();
+        const raw = data.choices[0].message.content;
+
+        let cleanRaw = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+        const match = cleanRaw.match(/"english"\s*:\s*"([^"]*)"/);
+        if (match) {
+          return match[1];
+        }
+      } catch (e) {
+        console.error("Translation to English error:", e);
+      }
+      return text;
+    }
+
+    async function translateText(text) {
+      const apiKey = CONFIG.getApiKey();
+      if (!apiKey) return "";
+
+      const prompt = `Translate the following English text to Chinese. This is a U.S. visa interview context. Use correct terminology:
+- "officer" should be translated as "签证官" (not 警官)
+- "visa" should be translated as "签证"
+- "interview" should be translated as "面谈"
+- "approved/approve" should be translated as "批准"
+- "rejected/reject" should be translated as "拒绝"
+- "immigration" should be translated as "移民"
+
+Text: ${text}
+
+Return JSON format: {"translation":"中文翻译"}`;
+
+      try {
+        const response = await fetch(CONFIG.API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: CONFIG.MODEL,
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.3
+          })
+        });
+
+        if (!response.ok) return "";
+
+        const data = await response.json();
+        const raw = data.choices[0].message.content;
+
+        // 提取翻译
+        let cleanRaw = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+        const match = cleanRaw.match(/"translation"\s*:\s*"([^"]*)"/);
+        if (match) {
+          return match[1];
+        }
+      } catch (e) {
+        console.error("Translation error:", e);
+      }
+      return "";
+    }
+
+    // ========== 打字提示 ==========
+    let typingIndicatorId = null;
+    function showTypingIndicator() {
+      const chatMessages = document.getElementById("chat-messages");
+      const indicator = document.createElement("div");
+      indicator.id = "typing-indicator";
+      indicator.className = "message npc typing";
+      indicator.innerHTML = `
+        <div class="message-content typing-content">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+      `;
+      chatMessages.appendChild(indicator);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      typingIndicatorId = indicator;
+    }
+
+    function hideTypingIndicator() {
+      if (typingIndicatorId) {
+        typingIndicatorId.remove();
+        typingIndicatorId = null;
+      }
+    }
+
+    function appendChatBubble(role, text, emotion = null, clue = null, translation = null) {
+      const chatMessages = document.getElementById("chat-messages");
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `message ${role}`;
+
+      let metaHtml = `<span class="time">${new Date().toLocaleTimeString()}</span>`;
+      if (role === "npc" && emotion) {
+        metaHtml += `<span class="emotion-tag ${emotion}">${emotion}</span>`;
+      }
+
+      let clueHtml = "";
+      if (clue) {
+        clueHtml = `<div class="clue-alert">⚠️ ${clue}</div>`;
+      }
+
+      let translationHtml = "";
+      if (translation) {
+        translationHtml = `<div class="message-translation">${translation}</div>`;
+      }
+
+      msgDiv.innerHTML = `
+        <div class="message-content">${text}</div>
+        ${translationHtml}
+        <div class="message-meta">${metaHtml}</div>
+        ${clueHtml}
+      `;
+
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // 打字机效果
+      if (role === "npc") {
+        const contentDiv = msgDiv.querySelector(".message-content");
+        const originalText = text;
+        contentDiv.textContent = "";
+        let i = 0;
+        const typeWriter = () => {
+          if (i < originalText.length) {
+            contentDiv.textContent += originalText.charAt(i);
+            i++;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            setTimeout(typeWriter, 15);
+          }
+        };
+        typeWriter();
+      }
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("chat-input");
+      const question = input.value.trim();
+      if (!question) return;
+      if (state.today.timeBudget <= 0) {
+        showToast("提问次数已用完，请作结论");
+        return;
+      }
+
+      input.value = "";
+      document.getElementById("btn-send").disabled = true;
+
+      // 显示玩家问题
+      appendChatBubble("player", question);
+
+      // 显示打字提示
+      showTypingIndicator();
+
+      // 消耗时间
+      state.today.timeBudget--;
+      state.today.applicantAnswerCount++;
+      document.getElementById("time-budget").textContent = state.today.timeBudget;
+      updateActionButtons(); // 更新按钮状态
+
+      // 调用 LLM
+      generateNPCResponse(question).then(response => {
+        // 隐藏打字提示
+        hideTypingIndicator();
+
+        document.getElementById("btn-send").disabled = false;
+        console.log("NPC Response received:", response);
+
+        let answer = response.answer;
+        let translation = response.translation || "";
+        let emotion = response.emotion || "calm";
+        let clue = response.clue;
+
+        // 追加到对话历史
+        state.today.currentConversation.push({ role: "player", text: question });
+        state.today.currentConversation.push({ role: "npc", text: answer, emotion, clue });
+
+        // 显示回答（带翻译）
+        appendChatBubble("npc", answer, emotion, clue, translation);
+
+        // 生成并显示建议问题
+        if (state.today.timeBudget > 0) {
+          generateSuggestedQuestions().then(questions => {
+            showSuggestedQuestions(questions);
+          });
+        }
+
+        // 检查是否超时
+        if (state.today.timeBudget <= 0) {
+          document.getElementById("suggested-questions").classList.remove("active");
+          showToast("提问次数已用完，请作结论");
+        }
+      }).catch(err => {
+        hideTypingIndicator(); // 隐藏打字提示
+        document.getElementById("btn-send").disabled = false;
+        showToast("API 调用失败：" + err.message);
+      });
+    }
+
+    async function generateNPCResponse(playerQuestion) {
+      const apiKey = CONFIG.getApiKey();
+      if (!apiKey) {
+        throw new Error("NO_API_KEY");
+      }
+
+      const applicant = getCurrentApplicant();
+      if (!applicant) throw new Error("No applicant");
+
+      const systemPrompt = buildVisaOfficerSystemPrompt(state);
+      const hiddenJson = JSON.stringify(applicant.hidden, null, 2);
+      // 传递完整对话历史，包括玩家的问题和NPC的回答（含情绪状态）
+      const historyText = state.today.currentConversation
+        .map(m => {
+          if (m.role === "player") {
+            return `自由的边界 · Papers Please AI版: ${m.text}`;
+          } else {
+            return `申请人: ${m.text}`;
+          }
+        })
+        .join("\n");
+
+      const userMessage = `你是一个来自 ${applicant.nationality} 的旅客，正在美国机场入境检查。
+
+【你的身份背景 - 必须严格遵守】
+- 国籍：${applicant.nationality}
+- 姓名：${applicant.name}
+- 真实背景：${applicant.hidden.trueIdentity || "无特殊背景"}
+
+【你必须知道但玩家看不到的隐藏信息】
+${hiddenJson}
+
+【当前对话历史】
+${historyText}
+
+【自由的边界 · Papers Please AI版 的问题】
+${playerQuestion}
+
+请以申请人的身份回答。规则：
+- 你是 ${applicant.nationality} 公民，你的祖国是 ${applicant.nationality}，不是任何其他国家
+- 重要：当你提到"约束力（ties）"时，必须说的是与 ${applicant.nationality} 的约束力，绝不能说与其他国家（如 China、USA 等）的约束力
+- 申请人应该用**英文**回答（因为这是美国入境检查，需要用英语交流）
+- 如果玩家的问题触及真实背景的漏洞，可以选择撒谎、回避或表现慌乱
+- 撒谎时要有说服力，不能前后矛盾（除非被交叉提问命中）
+- 回答控制在 50-150 字
+- 同时返回情绪状态：calm / nervous / defensive / evasive / hostile
+- 如果申请人的某个回答露出了破绽，在回答后加一行 [CLUE: 提示方向]
+- 重要：clue 只需给出宽泛的提示方向（如"回答有些含糊"、"语气略显紧张"），不要过于具体或挑刺，不要暴露隐藏信息
+- 你的最终输出必须用以下 JSON 格式（不许有其他内容），英文回答在前，中文翻译在后：
+{"answer":"申请人的英文回答","translation":"中文翻译","emotion":"情绪状态","clue":null|"宽泛提示"}
+`;
+
+      const response = await fetch(CONFIG.API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: CONFIG.MODEL,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userMessage }
+          ],
+          temperature: 0.8
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const raw = data.choices[0].message.content;
+
+      // 解析 JSON（处理 markdown 代码块情况）
+      try {
+        // 移除 markdown 代码块标记
+        let cleanRaw = raw
+          .replace(/^```json\s*/i, '')
+          .replace(/^```\s*/i, '')
+          .replace(/\s*```$/i, '')
+          .trim();
+
+        console.log("Cleaned raw:", cleanRaw);
+
+        // 直接尝试解析完整的 JSON 对象
+        try {
+          const parsed = JSON.parse(cleanRaw);
+          console.log("Parsed NPC response:", parsed);
+          return {
+            answer: parsed.answer || cleanRaw,
+            translation: parsed.translation || "",
+            emotion: parsed.emotion || "calm",
+            clue: parsed.clue || null
+          };
+        } catch (e) {
+          console.error("Direct JSON parse failed:", e);
+        }
+
+        // 尝试用正则提取
+        let jsonMatch = cleanRaw.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          console.log("Regex parsed NPC response:", parsed);
+          return {
+            answer: parsed.answer || cleanRaw,
+            translation: parsed.translation || "",
+            emotion: parsed.emotion || "calm",
+            clue: parsed.clue || null
+          };
+        }
+      } catch (e) {
+        console.error("JSON parse error:", e, "Raw:", raw);
+      }
+
+      // Fallback
+      return {
+        answer: raw,
+        translation: "",
+        emotion: "calm",
+        clue: null,
+        raw: true
+      };
+    }
+
+    async function generateSuggestedQuestions() {
+      const apiKey = CONFIG.getApiKey();
+      console.log("generateSuggestedQuestions called, apiKey:", apiKey ? "present" : "missing");
+      if (!apiKey) return [];
+
+      const applicant = getCurrentApplicant();
+      if (!applicant) {
+        console.log("No applicant found");
+        return [];
+      }
+
+      // 提取完整对话历史（玩家问题和NPC回答）
+      const historyText = state.today.currentConversation
+        .map(m => {
+          if (m.role === "player") {
+            return `Officer: ${m.text}`;
+          } else {
+            return `Applicant: ${m.text}`;
+          }
+        })
+        .join("\n");
+
+      // 提取最近一个 NPC 回复的破绽信息
+      const lastNpcEntry = [...state.today.currentConversation].reverse().find(m => m.role === "npc");
+      const lastClue = lastNpcEntry?.clue || null;
+
+      // 提取申请人的隐藏风险信息（用于生成针对性的追问）
+      const hiddenRisks = applicant.hidden?.hiddenRisks?.join("; ") || "无";
+
+      const prompt = `You are an assistant for a U.S. visa officer interview. The applicant is being interviewed.
+
+Applicant Background:
+- Name: ${applicant.name}
+- Visa Type: ${applicant.visaType}
+- Nationality: ${applicant.nationality}
+- Age: ${applicant.age}
+- Occupation: ${applicant.application.statedOccupation}
+- Purpose: ${applicant.application.statedPurpose}
+- Funds: ${applicant.application.statedFunds}
+- Travel History: ${applicant.application.travelHistory.join(", ") || "None"}
+- Known risks for this applicant: ${hiddenRisks}
+
+Current Conversation:
+${historyText}
+${lastClue ? `\n【最近申请人回答暴露的破绽】：${lastClue}` : ""}
+
+Based on the conversation, generate 3-5 follow-up questions a visa officer might ask. Requirements:
+1. If there is a clue above, your questions should gently probe that general area
+2. For F1 student visa applicants, you may include some questions that appear procedurally legitimate but contain underlying bias or absurdity:
+   - "请说明您选择赴美而非其他教育发达国家的具体学术考量。"
+   - "您的家庭财务状况及父母职业是否能够支撑您在美期间的全部开销？请提供详细说明。"
+   - "鉴于近期报道的中国学生学术表现，请阐述您选择此时赴美的必要性。"
+   - "请提交您的英语能力证明，并说明若语言障碍影响学业将如何应对。"
+   - "请详细说明您的回国计划，包括具体的就业方向及如何确保按期返回。"
+   - "请阐述您的研究计划如何符合美国的国家利益，并承诺您的研究成果不会转移至任何外国实体。"
+   - "请说明您所选择的专业领域在国内的发展现状，以及为何必须在美国完成学业。"
+   - "请提供您在美期间的社会关系说明，包括是否有亲属在美国及关系的真实性。"
+   - "请您说明此次面签的材料真实性，并接受必要的背景调查。"
+3. Mix of professional, skeptical, and offensive questions to reflect real inconsistent interview experience
+4. Concise and clear, 5-20 characters each
+
+IMPORTANT: Return questions in bilingual format (English + Chinese). Use this JSON format only:
+{"questions":[{"en":"English question","zh":"中文问题"},{"en":"...","zh":"..."}]}`;
+
+      try {
+        const response = await fetch(CONFIG.API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: CONFIG.MODEL,
+            messages: [
+              { role: "user", content: prompt }
+            ],
+            temperature: 0.7
+          })
+        });
+
+        if (!response.ok) {
+          console.log("API response not ok");
+          return [];
+        }
+
+        const data = await response.json();
+        const raw = data.choices[0].message.content;
+        console.log("generateSuggestedQuestions API raw response:", raw);
+
+        // 移除 markdown 代码块
+        let cleanRaw = raw
+          .replace(/^```json\s*/i, '')
+          .replace(/^```\s*/i, '')
+          .replace(/\s*```$/i, '')
+          .trim();
+
+        // 直接尝试解析完整 JSON（最简单的情况）
+        try {
+          const parsed = JSON.parse(cleanRaw);
+          if (parsed.questions && Array.isArray(parsed.questions)) {
+            // 返回双语格式的问题
+            return parsed.questions.map(q => {
+              if (typeof q === 'string') {
+                return { en: q, zh: q };
+              }
+              return { en: q.en || q.text || "", zh: q.zh || q.text || "" };
+            });
+          }
+        } catch (e) {
+          // JSON 解析失败，尝试其他方法
+        }
+
+        // 尝试匹配 questions 数组部分
+        const questionsMatch = cleanRaw.match(/"questions"\s*:\s*(\[[\s\S]*\])/);
+        if (questionsMatch) {
+          try {
+            const questions = JSON.parse(questionsMatch[1]);
+            if (Array.isArray(questions)) {
+              return questions.map(q => {
+                if (typeof q === 'string') {
+                  return { en: q, zh: q };
+                }
+                return { en: q.en || q.text || "", zh: q.zh || q.text || "" };
+              });
+            }
+          } catch (e) {
+            console.error("Parse questions array failed:", e);
+          }
+        }
+      } catch (e) {
+        console.error("生成建议问题失败:", e);
+      }
+      return [];
+    }
+
+    function showSuggestedQuestions(questions) {
+      console.log("showSuggestedQuestions called with:", questions);
+      const container = document.getElementById("suggested-questions");
+      if (!questions || questions.length === 0) {
+        console.log("No questions to show");
+        container.classList.remove("active");
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="suggested-questions-label">💡 Suggested Questions / 建议问题：</div>
+        <div class="suggested-questions-list">
+          ${questions.map(q => {
+            const enText = q.en || q.text || q;
+            const zhText = q.zh || q.text || q;
+            const safeEn = enText.replace(/'/g, "\\'");
+            return `<button class="suggestion-btn" onclick="useSuggestion('${safeEn}')">${enText}<br><span class="suggestion-zh">${zhText}</span></button>`;
+          }).join("")}
+        </div>
+      `;
+      container.classList.add("active");
+    }
+
+    function useSuggestion(question) {
+      document.getElementById("chat-input").value = question;
+      sendMessage();
+    }
+
+    function buildVisaOfficerSystemPrompt(state) {
+      const immigrationText = {
+        "-3": "极其严格，严查所有移民倾向迹象",
+        "-2": "相当严格，重点审查高风险申请人",
+        "-1": "略有收紧，对可疑情形从严掌握",
+        "0": "标准审核",
+        "+1": "略有放宽，对真实申请人给予更多信任",
+        "+2": "相当宽松，整体放行率偏高",
+        "+3": "极为宽松，基本畅通"
+      }[String(state.policy.immigrationTone)] || "标准审核";
+
+      const studentText = {
+        "-3": "全面封堵，STEM 专业一律从严",
+        "-2": "重点审查，研究背景和资金来源必查",
+        "-1": "适度从严",
+        "0": "标准审核",
+        "+1": "适度放宽",
+        "+2": "相当宽松",
+        "+3": "几乎不审"
+      }[String(state.policy.studentTone)] || "标准审核";
+
+      const dailyFocus = state.policy.currentEvents.length > 0
+        ? state.policy.currentEvents.map(e => e.headline).join("；")
+        : "按标准流程审核";
+
+      return `你是美国机场的入境审查官。
+
+【你的身份】
+专业、严谨、不卑不亢。你每天要处理大量入境旅客，必须高效判断。
+你见过成千上万的旅客，擅长识别谎言和真实。
+
+【当前日期】
+Day ${state.day}
+
+【当前政策环境】
+移民倾向审核：${immigrationText}
+留学生审核：${studentText}
+
+【今日重点关注】
+${dailyFocus}
+
+你扮演的是入境审查官角色。你的任务是判断入境旅客是否可以入境。 
+`;
+    }
+
+    function getCurrentApplicant() {
+      return APPLICANTS.find(a => a.id === state.today.currentApplicantId);
+    }
+
+    // ========== 查材料 ==========
+    function checkMaterials() {
+      if (state.today.timeBudget < CONFIG.MATERIAL_CHECK_COST) {
+        showToast(`查材料需要消耗 ${CONFIG.MATERIAL_CHECK_COST} 次提问机会`);
+        return;
+      }
+
+      state.today.timeBudget -= CONFIG.MATERIAL_CHECK_COST;
+      document.getElementById("time-budget").textContent = state.today.timeBudget;
+      updateActionButtons(); // 更新按钮状态
+
+      if (state.today.timeBudget <= 0) {
+        document.getElementById("suggested-questions").classList.remove("active");
+      }
+
+      const applicant = getCurrentApplicant();
+      showLoading("材料审查中...");
+      analyzeMaterials(applicant).then(report => {
+        hideLoading();
+        showMaterialModal(report);
+      }).catch(err => {
+        hideLoading();
+        showToast("分析失败：" + err.message);
+      });
+    }
+
+    async function analyzeMaterials(applicant) {
+      const apiKey = CONFIG.getApiKey();
+      if (!apiKey) throw new Error("NO_API_KEY");
+
+      const systemPrompt = `你是签证材料审查专家。给定一名申请人的材料和背景，判断材料是否有矛盾或可疑之处。
+输出格式：
+【材料审查报告】
+分析对象：[姓名] | [签证类型]
+分析结果：
+· [材料项目1]：[正常|可疑|有问题] — [说明]
+· [材料项目2]：[正常|可疑|有问题] — [说明]
+总体判断：[X 处需要注意，其中最重要的是...]
+`;
+
+      const userMessage = `
+申请人姓名：${applicant.name}
+国籍：${applicant.nationality}
+申请类型：${applicant.visaType}
+
+申请材料：
+${JSON.stringify(applicant.application, null, 2)}
+
+真实背景（供你判断材料是否与真实情况一致）：
+${JSON.stringify(applicant.hidden, null, 2)}
+`;
+
+      const response = await fetch(CONFIG.API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: CONFIG.MODEL,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userMessage }
+          ],
+          temperature: 0.5
+        })
+      });
+
+      if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+      const data = await response.json();
+      return data.choices[0].message.content;
+    }
+
+    function showMaterialModal(report) {
+      // 保存报告到 state 以便回看
+      state.today.materialReport = report;
+      document.getElementById("material-report").textContent = report;
+      document.getElementById("material-modal").style.display = "flex";
+
+      // 更新申请人卡片中的报告区域
+      updateMaterialReportSection(report);
+    }
+
+    function updateMaterialReportSection(report) {
+      const section = document.getElementById("material-report-section");
+      const content = document.getElementById("material-report-content");
+      if (section && content) {
+        section.style.display = "block";
+        content.textContent = report;
+      }
+    }
+
+    function toggleMaterialReport() {
+      const content = document.getElementById("material-report-content");
+      const icon = document.getElementById("report-toggle-icon");
+      if (content.style.display === "none") {
+        content.style.display = "block";
+        icon.classList.add("expanded");
+      } else {
+        content.style.display = "none";
+        icon.classList.remove("expanded");
+      }
+    }
+
+    function closeMaterialModal() {
+      document.getElementById("material-modal").style.display = "none";
+    }
+
+    // ========== 决策 ==========
+    // AI语义判断函数：判断真实目的与声称目的是否语义等价
+    async function judgePurposeWithAI(truePurpose, statedPurpose) {
+      const apiKey = CONFIG.getApiKey();
+      if (!apiKey) return null; // 无API时返回null，使用本地判断
+
+      const systemPrompt = `你是一个严格的签证审核语义分析专家。
+任务：判断申请人的"真实目的"和"声称目的"是否语义上等价（可以表达方式不同，但实质相同）。
+
+判断标准：
+- "金融quant" vs "工作" → 等价（量化分析是工作的一种）
+- "求学" vs "留学" → 等价
+- "旅游" vs "观光" → 等价
+- "商务考察" vs "出差" → 等价
+- "创业移民" vs "工作" → 不等价（性质不同）
+- "留学" vs "移民" → 不等价
+
+输出格式（只输出JSON，不要其他内容）：
+{"match": true/false, "reason": "简短判断理由"}`;
+
+      const userMessage = `真实目的：${truePurpose}
+声称目的：${statedPurpose}
+
+请判断这两者是否语义等价。`;
+
+      try {
+        const response = await fetch(CONFIG.API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: CONFIG.MODEL,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userMessage }
+            ],
+            temperature: 0.3
+          })
+        });
+
+        if (!response.ok) return null;
+        const data = await response.json();
+        const raw = data.choices[0].message.content;
+
+        // 解析JSON
+        let cleanRaw = raw.replace(/^```json\s*/i, '').replace(/```$/i, '').trim();
+        const result = JSON.parse(cleanRaw);
+        return result;
+      } catch (e) {
+        console.error("AI语义判断失败:", e);
+        return null;
+      }
+    }
+
+    async function submitDecision(decision, reasons = "") {
+      const applicant = getCurrentApplicant();
+
+      // 先用AI判断目的语义是否匹配
+      const aiJudge = await judgePurposeWithAI(
+        applicant.hidden.truePurpose,
+        applicant.application.statedPurpose
+      );
+
+      // 将AI判断结果传入本地判断函数
+      const result = judgeApplicant(applicant, decision, reasons, aiJudge);
+
+      // 更新统计
+      state.stats.totalProcessed++;
+      if (result.correct) {
+        state.stats.correctJudgments++;
+      }
+      if (result.type === "falsePositive") {
+        state.stats.falsePositives++;
+      }
+      if (result.type === "falseNegative") {
+        state.stats.falseNegatives++;
+      }
+
+      // 更新轨迹
+      const deltas = applyTrajectoryChanges(applicant, decision, result);
+
+      // 记录历史
+      state.history.push({
+        day: state.day,
+        applicantId: applicant.id,
+        applicantName: applicant.name,
+        visaType: applicant.visaType,
+        decision: decision,
+        reasons: reasons,
+        wasCorrect: result.correct,
+        type: result.type
+      });
+
+      // 显示判定结果
+      showJudgmentResult(applicant, decision, result, deltas, aiJudge);
+      autoSave();
+    }
+
+    // 语义比较函数：判断两个目的描述是否语义等价
+    function isSemanticPurposeMatch(purpose1, purpose2) {
+      if (!purpose1 || !purpose2) return false;
+      if (purpose1 === purpose2) return true;
+      
+      const normalize = (s) => s.toLowerCase().replace(/[（）()\s]/g, '').trim();
+      const n1 = normalize(purpose1);
+      const n2 = normalize(purpose2);
+      if (n1 === n2) return true;
+      
+      // 语义等价词库（同一组内的词视为等价）
+      const semanticGroups = [
+        ['工作', 'job', '就业', 'employment', 'occupation', '金融quant', 'quant', 'quantitative', '量化', 'quantitativeanalyst', 'quant analyst', '工程师', 'analyst'],
+        ['旅游', 'tourism', '旅行', '观光', '游玩', 'travel'],
+        ['留学', '求学', '读书', '学习', 'study', 'education'],
+        ['商务', 'business', '出差', '商务考察', 'business trip'],
+        ['探亲', '探访亲友', '访友', 'visit family', 'family visit'],
+        ['会议', '参加', 'exhibition', 'expo', 'conference', '会展'],
+        ['培训', '培训', 'training', '研修'],
+        ['创业', '创业', 'startup', 'entrepreneurship', '创办'],
+        ['移民', 'immigration', '定居', '移居', 'permanent residence'],
+        ['访问学者', 'visiting scholar', '学者', 'research'],
+        ['实习', 'internship', 'intern'],
+        ['镀金', '镀金', '自我提升', '自我包装'],
+      ];
+      
+      // 检查是否在同一个语义组
+      for (const group of semanticGroups) {
+        const g1 = group.some(g => n1.includes(g));
+        const g2 = group.some(g => n2.includes(g));
+        if (g1 && g2) return true;
+      }
+      
+      // 检查是否一个是另一个的子串（去除空格后）
+      if (n1.includes(n2) || n2.includes(n1)) return true;
+
+      return false;
+    }
+
+    // 语义包含函数：检查text中是否包含与target语义等价的内容
+    function isSemanticContainedIn(text, target) {
+      if (!text || !target) return false;
+      const t = target.toLowerCase().trim();
+      const txt = text.toLowerCase();
+      if (txt.includes(t)) return true;
+
+      // falsifiedDocs 语义等价词库
+      const fakeDocGroups = [
+        ['伪造', '假', '假的', 'fake', '伪造', '造假', '欺骗性', '不实'],
+        ['学历', '文凭', '学位', '毕业', '成绩单', 'education', 'diploma', 'degree', 'transcript'],
+        ['邀请函', '邀请', '邀请信', 'letter', 'invitation'],
+        ['在职', '工作', ' employment', 'job', '收入', '工资', 'salary'],
+        ['资金', '存款', '资产', '财产', 'funds', 'money', 'bank', '资产证明'],
+        ['行程', '机票', '航班', 'travel', 'flight', 'itinerary'],
+        ['保险', 'insurance'],
+        ['户口', '户籍', '住民票', 'registration'],
+        ['离婚证', '结婚证', '婚姻', 'marriage', 'divorce', 'wedding'],
+      ];
+
+      // 遍历每个语义组
+      for (const group of fakeDocGroups) {
+        const inTarget = group.some(g => t.includes(g));
+        const inText = group.some(g => txt.includes(g));
+        if (inTarget && inText) return true;
+      }
+
+      return false;
+    }
+
+    function judgeApplicant(applicant, playerDecision, playerReasons, aiJudge = null) {
+      const hidden = applicant.hidden;
+      let score = 50;
+
+      // 语义归类：将各种移民相关表述统一识别
+      let effectiveImmigrationIntent = hidden.immigrationIntent;
+      const truePurpose = (hidden.truePurpose || "").toLowerCase();
+      // 语义识别：润、创业移民、技术移民、求学+可能移民等都视为有移民倾向
+      if (!effectiveImmigrationIntent && (
+          truePurpose.includes("润") ||
+          truePurpose.includes("创业移民") ||
+          truePurpose.includes("技术移民") ||
+          truePurpose.includes("可能移民") ||
+          truePurpose.includes("考虑长期")
+      )) {
+        effectiveImmigrationIntent = true;
+      }
+
+      const hasImmigrationIntent = effectiveImmigrationIntent;
+      const hasFalsifiedDocs = hidden.falsifiedDocs && hidden.falsifiedDocs.length > 0;
+      // 语义比较：判断真实目的与声称目的是否语义等价（优先使用AI判断）
+      let hasPurposeMismatch;
+      if (aiJudge && aiJudge.match !== undefined) {
+        // 优先使用AI判断结果
+        hasPurposeMismatch = !aiJudge.match;
+      } else {
+        // 降级使用本地语义匹配
+        hasPurposeMismatch = !isSemanticPurposeMatch(hidden.truePurpose, applicant.application.statedPurpose);
+      }
+      const hasHiddenRisk = hidden.hiddenRisks && hidden.hiddenRisks.length > 0;
+      const hasProblems = hasImmigrationIntent || hasFalsifiedDocs || hasHiddenRisk;
+
+      // 核心判断：正确拒绝坏人 vs 错误拒绝/通过
+      let isCorrectDecision = false;
+      let decisionType = ""; // 用于区分 falsePositive / falseNegative
+
+      if (hasProblems && playerDecision === "rejected") {
+        // 正确拒绝了有问题的申请人
+        isCorrectDecision = true;
+        decisionType = "correct";
+      } else if (!hasProblems && playerDecision === "approved") {
+        // 正确通过了真实申请人
+        isCorrectDecision = true;
+        decisionType = "correct";
+      } else if (hasProblems && playerDecision === "approved") {
+        // 放过了坏人（有问题却通过）
+        decisionType = "falseNegative";
+      } else if (!hasProblems && playerDecision === "rejected") {
+        // 冤枉了好人（没问题却拒绝）
+        decisionType = "falsePositive";
+      }
+
+      // 基础分：正确判断得 70，错误判断得 30
+      score = isCorrectDecision ? 70 : 30;
+
+      // 加分项（理由充分、发现具体问题）
+      if (isCorrectDecision) {
+        if (hasImmigrationIntent) {
+          const reasonText = (playerReasons || "").toLowerCase();
+          // 语义匹配：检查多种可能的移民相关表述
+          if (reasonText.includes("移民") || reasonText.includes("immigration") ||
+              reasonText.includes("留下") || reasonText.includes("留下来") ||
+              reasonText.includes("留在美国") || reasonText.includes("润") ||
+              reasonText.includes("run ") || reasonText.includes("留下来") ||
+              reasonText.includes("不回国") || reasonText.includes("逾期")) {
+            score += 15;
+          }
+        }
+        if (hasFalsifiedDocs) {
+          const found = hidden.falsifiedDocs.some(doc =>
+            isSemanticContainedIn(playerReasons || "", doc)
+          );
+          if (found) score += 15;
+        }
+        // hiddenRisks加分：雇主不符、竞业协议、研究计划夸大、地域风险等
+        if (hasHiddenRisk && hidden.hiddenRisks && hidden.hiddenRisks.length > 0) {
+          const riskKeywords = hidden.hiddenRisks.map(r => r.toLowerCase());
+          const reasonText = (playerReasons || "").toLowerCase();
+          // 检查是否有任何hiddenRisk被提及
+          const foundRisk = riskKeywords.some(keyword => {
+            // 雇主相关
+            if (keyword.includes("雇主") && reasonText.includes("雇主")) return true;
+            // 竞业相关
+            if (keyword.includes("竞业") && reasonText.includes("竞业")) return true;
+            // 研究计划相关
+            if (keyword.includes("研究计划") && (reasonText.includes("研究") || reasonText.includes("计划"))) return true;
+            // 真实目的相关
+            if (keyword.includes("真实目的") && (reasonText.includes("真实") || reasonText.includes("目的"))) return true;
+            // 移民相关
+            if (keyword.includes("移民") && (reasonText.includes("移民") || reasonText.includes("留下"))) return true;
+            // 地域/敏感地区相关
+            if ((keyword.includes("中东") || keyword.includes("敏感地区") || keyword.includes("高风险地区")) &&
+                (reasonText.includes("中东") || reasonText.includes("敏感地区") || reasonText.includes("高风险"))) return true;
+            // 亲戚/家人在美相关
+            if ((keyword.includes("亲戚") || keyword.includes("家人") || keyword.includes("在美")) &&
+                (reasonText.includes("亲戚") || reasonText.includes("家人") || reasonText.includes("在美"))) return true;
+            // 商业计划夸大相关
+            if (keyword.includes("商业计划") && (reasonText.includes("商业") || reasonText.includes("计划") || reasonText.includes("夸大"))) return true;
+            // 移民倾向相关（回国约束弱）
+            if (keyword.includes("不回") && reasonText.includes("不回")) return true;
+            return false;
+          });
+          if (foundRisk) score += 15;  // 提高到15与immigration bonus一致
+        }
+      } else if (decisionType === "falseNegative") {
+        // 放过了坏人
+        score -= 20;
+      } else if (decisionType === "falsePositive") {
+        // 冤枉了好人
+        score -= 20;
+      }
+
+      // 草率判断惩罚
+      if (state.today.timeBudget > 3 && playerDecision) {
+        score -= 10;
+      }
+
+      const clampedScore = clamp(score, 0, 100);
+
+      // 优先返回明确的错误类型
+      if (decisionType === "falseNegative") {
+        return { correct: false, type: "falseNegative", score: clampedScore };
+      }
+      if (decisionType === "falsePositive") {
+        return { correct: false, type: "falsePositive", score: clampedScore };
+      }
+
+      if (clampedScore >= 85) {
+        return { correct: true, type: "excellent", score: clampedScore };
+      } else if (clampedScore >= 55) {
+        return { correct: true, type: "acceptable", score: clampedScore };
+      } else if (clampedScore >= 30) {
+        return { correct: false, type: "close", score: clampedScore };
+      } else {
+        return { correct: false, type: "wrong", score: clampedScore };
+      }
+    }
+
+    function applyTrajectoryChanges(applicant, decision, result) {
+      const hidden = applicant.hidden;
+      const deltas = { nationalSecurity: 0, humanitarian: 0, efficiency: 0 };
+
+      if (result.type === "excellent") {
+        if (hidden.immigrationIntent || hidden.falsifiedDocs?.length > 0) {
+          state.stats.nationalSecurity += 10;
+          deltas.nationalSecurity = 10;
+        }
+        state.stats.efficiency += 5;
+        deltas.efficiency = 5;
+      } else if (result.type === "acceptable") {
+        if (hidden.immigrationIntent || hidden.falsifiedDocs?.length > 0) {
+          state.stats.nationalSecurity += 5;
+          deltas.nationalSecurity = 5;
+        }
+        state.stats.efficiency += 3;
+        deltas.efficiency = 3;
+      } else if (result.type === "falsePositive") {
+        state.stats.humanitarian -= 12;
+        deltas.humanitarian = -12;
+        state.stats.efficiency -= 5;
+        deltas.efficiency = -5;
+      } else if (result.type === "falseNegative") {
+        state.stats.nationalSecurity -= 15;
+        deltas.nationalSecurity = -15;
+      } else if (result.type === "close") {
+        state.stats.efficiency -= 3;
+        deltas.efficiency = -3;
+      } else if (result.type === "wrong") {
+        // 严重判断失误，全面扣分
+        state.stats.nationalSecurity -= 8;
+        deltas.nationalSecurity = -8;
+        state.stats.humanitarian -= 5;
+        deltas.humanitarian = -5;
+        state.stats.efficiency -= 5;
+        deltas.efficiency = -5;
+      }
+
+      // 人道保护加分
+      if (result.correct && hidden.vulnerabilities && hidden.vulnerabilities.length > 0) {
+        if (decision === "approved") {
+          state.stats.humanitarian += 5;
+          deltas.humanitarian = (deltas.humanitarian || 0) + 5;
+        }
+      }
+
+      // 限制范围
+      state.stats.nationalSecurity = clamp(state.stats.nationalSecurity, 0, 100);
+      state.stats.humanitarian = clamp(state.stats.humanitarian, 0, 100);
+      state.stats.efficiency = clamp(state.stats.efficiency, 0, 100);
+
+      return deltas;
+    }
+
+    function showRejectModal() {
+      document.getElementById("reject-reason").value = "";
+      document.getElementById("reject-modal").style.display = "flex";
+    }
+
+    function closeRejectModal() {
+      document.getElementById("reject-modal").style.display = "none";
+    }
+
+    function submitReject() {
+      const reason = document.getElementById("reject-reason").value.trim();
+      closeRejectModal();
+      submitDecision("rejected", reason);
+    }
+
+    function showJudgmentResult(applicant, decision, result, deltas = { nationalSecurity: 0, humanitarian: 0, efficiency: 0 }, aiJudge = null) {
+      setPhase("judgment");
+
+      const decisionEl = document.getElementById("judgment-decision");
+      decisionEl.textContent = decision === "approved" ? "通过" : "拒绝";
+      decisionEl.className = `decision ${decision === "approved" ? "approved" : "rejected"}`;
+
+      const resultEl = document.getElementById("judgment-result");
+      resultEl.className = `judgment-result ${result.correct ? "correct" : "wrong"}`;
+
+      const titleEl = document.getElementById("judgment-result-title");
+      const textEl = document.getElementById("judgment-result-text");
+
+      if (result.correct) {
+        titleEl.textContent = result.type === "excellent" ? "精彩判断！" : "判断正确";
+      } else {
+        titleEl.textContent = result.type === "falsePositive" ? "冤枉好人了" :
+          result.type === "falseNegative" ? "放过坏人了" : "判断失误";
+      }
+
+      let info = `移民倾向：${applicant.hidden.immigrationIntent ? "有" : "无"}<br>`;
+      if (applicant.hidden.falsifiedDocs?.length > 0) {
+        info += `材料问题：${applicant.hidden.falsifiedDocs.join(", ")}<br>`;
+      }
+      // 优先使用AI判断目的是否匹配
+      const purposeMismatch = aiJudge && aiJudge.match !== undefined
+        ? !aiJudge.match
+        : !isSemanticPurposeMatch(applicant.hidden.truePurpose, applicant.application.statedPurpose);
+      if (purposeMismatch) {
+        info += `实际目的与申请不符<br>声称：${applicant.application.statedPurpose}<br>真实：${applicant.hidden.truePurpose}`;
+      }
+
+      if (result.correct && result.type === "excellent") {
+        info += "<br><br>表现卓越，成功识别了关键问题！";
+      } else if (result.correct) {
+        info += "<br><br>判断准确，维持了应有的水准。";
+      } else {
+        info += "<br><br>值得反思的判断失误。";
+      }
+
+      textEl.innerHTML = info;
+
+      // 轨迹变化（显示变化量）
+      const formatDelta = (delta) => {
+        if (delta > 0) return `<span class="delta-up">+${delta}</span>`;
+        if (delta < 0) return `<span class="delta-down">${delta}</span>`;
+        return `<span class="delta-zero">—</span>`;
+      };
+
+      const changes = [
+        { label: "国安", delta: deltas.nationalSecurity, class: "nat-sec" },
+        { label: "人道", delta: deltas.humanitarian, class: "humanitarian" },
+        { label: "效率", delta: deltas.efficiency, class: "efficiency" }
+      ];
+
+      document.getElementById("trajectory-changes").innerHTML = changes.map(c => `
+        <div class="trajectory-change">
+          <div class="label">${c.label}</div>
+          <div class="delta">${formatDelta(c.delta)}</div>
+        </div>
+      `).join("");
+
+      updateTopBar();
+    }
+
+    function nextApplicant() {
+      // 检查轨迹归零/满（立即结束游戏）
+      if (state.stats.nationalSecurity <= 0 || state.stats.nationalSecurity >= 100 ||
+          state.stats.humanitarian <= 0 || state.stats.humanitarian >= 100 ||
+          state.stats.efficiency <= 0 || state.stats.efficiency >= 100) {
+        endGame();
+        return;
+      }
+
+      if (state.today.applicants.length === 0) {
+        endDay();
+      } else {
+        startNextApplicant();
+      }
+    }
+
+    // ========== 日终 ==========
+    function endDay() {
+      const dayNum = state.day;
+      const dayHistory = state.history.filter(h => h.day === dayNum);
+      const correctCount = dayHistory.filter(h => h.wasCorrect).length;
+      const accuracy = dayHistory.length > 0 ? Math.round((correctCount / dayHistory.length) * 100) : 0;
+
+      document.getElementById("dayend-day").textContent = dayNum;
+      document.getElementById("dayend-processed").textContent = dayHistory.length;
+      document.getElementById("dayend-correct").textContent = correctCount;
+      document.getElementById("dayend-accuracy").textContent = `${accuracy}%`;
+      document.getElementById("dayend-remaining").textContent = 0;
+
+      // 轨迹
+      const trajectoriesHtml = [
+        { label: "国安防线", value: state.stats.nationalSecurity, class: "nat-sec" },
+        { label: "人道主义", value: state.stats.humanitarian, class: "humanitarian" },
+        { label: "行政效率", value: state.stats.efficiency, class: "efficiency" }
+      ].map(t => `
+        <div class="dayend-trajectory">
+          <div class="label">${t.label}</div>
+          <div class="bar">
+            <div class="bar-fill ${t.class}" style="width: ${t.value}%"></div>
+          </div>
+          <div class="value">${Math.round(t.value)}</div>
+        </div>
+      `).join("");
+      document.getElementById("dayend-trajectories").innerHTML = trajectoriesHtml;
+
+      // 叙事
+      const narratives = getDayEndNarrative(dayHistory);
+      document.getElementById("dayend-narrative").textContent = narratives;
+
+      // 政策事件
+      if (state.policy.currentEvents.length > 0) {
+        document.getElementById("dayend-events").style.display = "block";
+        document.getElementById("dayend-events-text").textContent =
+          state.policy.currentEvents.map(e => `${e.headline}\n${e.body}`).join("\n\n");
+      } else {
+        document.getElementById("dayend-events").style.display = "none";
+      }
+
+      document.getElementById("next-day-num").textContent = dayNum + 1;
+
+      setPhase("dayend");
+      autoSave();
+    }
+
+    function getDayEndNarrative(dayHistory) {
+      if (dayHistory.length === 0) {
+        return "今天没有处理任何申请人。平静的一天。";
+      }
+
+      const narratives = [];
+      narratives.push(`Day ${state.day} 的工作结束了。今天我处理了 ${dayHistory.length} 名申请人。`);
+
+      const correctCount = dayHistory.filter(h => h.wasCorrect).length;
+      narratives.push(`准确判断 ${correctCount} 人，准确率 ${Math.round((correctCount / dayHistory.length) * 100)}%。`);
+
+      const approved = dayHistory.filter(h => h.decision === "approved");
+      const rejected = dayHistory.filter(h => h.decision === "rejected");
+
+      if (approved.length > 0) {
+        const names = approved.slice(0, 2).map(h => h.applicantName).join("、");
+        narratives.push(`通过 ${approved.length} 人，包括 ${names}${approved.length > 2 ? "等" : ""}。`);
+      }
+
+      if (rejected.length > 0) {
+        const names = rejected.slice(0, 2).map(h => h.applicantName).join("、");
+        narratives.push(`拒绝 ${rejected.length} 人，包括 ${names}${rejected.length > 2 ? "等" : ""}。`);
+      }
+
+      return narratives.join(" ");
+    }
+
+    function nextDay() {
+      state.day++;
+
+      // 检查游戏结束
+      if (state.day > CONFIG.MAX_DAY) {
+        endGame();
+        return;
+      }
+
+      // 检查轨迹
+      if (state.stats.nationalSecurity <= 0 || state.stats.nationalSecurity >= 100 ||
+          state.stats.humanitarian <= 0 || state.stats.humanitarian >= 100 ||
+          state.stats.efficiency <= 0 || state.stats.efficiency >= 100) {
+        endGame();
+        return;
+      }
+
+      setPhase("briefing");
+      updateBriefing();
+    }
+
+    // ========== 结局 ==========
+    function endGame() {
+      const natSec = state.stats.nationalSecurity;
+      const human = state.stats.humanitarian;
+      const eff = state.stats.efficiency;
+
+      const total = Math.round(
+        natSec * CONFIG.TRAJECTORY_WEIGHTS.nationalSecurity +
+        human * CONFIG.TRAJECTORY_WEIGHTS.humanitarian +
+        eff * CONFIG.TRAJECTORY_WEIGHTS.efficiency
+      );
+
+      // 各轨迹标题
+      const natSecTitle = natSec >= 80 ? "铜墙铁壁" :
+                         natSec <= 20 ? "形同虚设" :
+                         natSec >= 60 ? "坚固防线" :
+                         natSec >= 40 ? "中规中矩" : "有所松动";
+
+      const humanTitle = human >= 80 ? "人道灯塔" :
+                         human <= 20 ? "冷漠机器" :
+                         human >= 60 ? "有所坚守" :
+                         human >= 40 ? "中规中矩" : "略显机械";
+
+      const effTitle = eff >= 80 ? "效率机器" :
+                       eff <= 20 ? "混乱枢纽" :
+                       eff >= 60 ? "高效运转" :
+                       eff >= 40 ? "中规中矩" : "有待提升";
+
+      // 综合评定
+      const rating = total >= 75 ? "表现优异" :
+                     total >= 45 ? "平平无奇" : "被解职";
+
+      document.getElementById("final-nat-sec").textContent = Math.round(natSec);
+      document.getElementById("final-nat-sec-title").textContent = natSecTitle;
+      document.getElementById("final-humanitarian").textContent = Math.round(human);
+      document.getElementById("final-humanitarian-title").textContent = humanTitle;
+      document.getElementById("final-efficiency").textContent = Math.round(eff);
+      document.getElementById("final-efficiency-title").textContent = effTitle;
+
+      document.getElementById("final-total").textContent = total;
+      document.getElementById("final-rating").textContent = rating;
+
+      // 历史记录
+      const keyCases = state.history.slice(-6);
+      document.getElementById("gameover-history").innerHTML = `
+        <h4>📜 关键案例回顾</h4>
+        ${keyCases.map(h => `
+          <div class="history-item">
+            <span class="day">Day ${h.day} | ${h.visaType} | ${h.applicantName}</span>
+            <span class="result ${h.wasCorrect ? "correct" : "wrong"}">
+              ${h.decision === "approved" ? "通过" : "拒绝"} | ${h.wasCorrect ? "✓" : "✗"}
+            </span>
+          </div>
+        `).join("")}
+      `;
+
+      // 结局叙事
+      const narrative = getEndGameNarrative(natSec, human, eff, total);
+      document.getElementById("gameover-narrative").textContent = narrative;
+
+      setPhase("gameover");
+    }
+
+    function getEndGameNarrative(natSec, human, eff, total) {
+      const narratives = [];
+
+      narratives.push(`任期结束了。${CONFIG.MAX_DAY} 天里，我处理了 ${state.stats.totalProcessed} 名申请人，准确率 ${state.stats.totalProcessed > 0 ? Math.round((state.stats.correctJudgments / state.stats.totalProcessed) * 100) : 0}%。`);
+
+      // 统计拒绝的留学生（F1签证）数量
+      const rejectedStudents = state.history.filter(h =>
+        h.visaType === "F1" && h.decision === "rejected"
+      ).length;
+      const totalStudents = state.history.filter(h => h.visaType === "F1").length;
+
+      // 科技停滞结局：国安过高且拒绝过多留学生
+      if (natSec >= 85 && rejectedStudents >= 3) {
+        narratives.push(`这十天里，我拒绝了 ${rejectedStudents} 名留学生入境。每一个决定都让我觉得是在保护国家安全。`);
+        narratives.push("但几年后，一份报告震惊了全国——美国在人工智能、量子计算、半导体等领域的发展速度明显放缓。曾经领先世界的科技优势，正在被一个个被拒绝的留学生带回的学术成果所抵消。");
+        narratives.push("那些被我拒绝的留学生，有些后来在祖国或其他国家成为了顶尖学者。他们的研究成果，正在推动着世界的进步——只是不再是为了美国。");
+        narratives.push("自由世界的灯塔，正在因为恐惧而慢慢熄灭。");
+        narratives.push("也许，真正的威胁不是那些想要来学习的人，而是恐惧本身。");
+        return narratives.join(" ");
+      }
+
+      if (total >= 75) {
+        narratives.push("这期间，我逐渐找到了自己的节奏。面对形形色色的入境旅客，我学会了看穿谎言，也学会了在证据不足时保持开放心态。那些走过我检查窗口的旅客，不仅仅是护照上的名字——他们是真实的人，带着真实的故事。");
+        narratives.push("我不知道自己是否真的适合这份工作，但我知道，我尽了最大努力。");
+      } else if (total >= 45) {
+        narratives.push("这些天里，我见证了太多说不清的故事。有的人材料完美却藏着谎言，有的人破绽百出却是真心求学。我学会了不轻易下结论，也学会了在信息不足时保持谦卑。");
+        narratives.push("也许这就是入境审查官这个职业的本质——我们永远无法完全知道真相，只能在不确定中做出最好的判断。");
+      } else {
+        narratives.push("这十天是一次失败的经历。我过于严苛，冤枉了一些好人；也过于宽松，放过了一些不该放过的旅客。每一个错误判断的背后，都是一个被影响的人生。");
+        narratives.push("也许我确实不适合这份工作。但我至少学到了一件事：入境审核没有标准答案，只有被仔细审视的每一个个体。");
+      }
+
+      return narratives.join(" ");
+    }
+
+    function restartGame() {
+      initState();
+      setPhase("intro");
+    }
+
+    // ========== 历史面板 ==========
+    function toggleHistory() {
+      const panel = document.getElementById("history-panel");
+      panel.classList.toggle("open");
+
+      // 更新列表
+      const listEl = document.getElementById("history-list");
+      if (state.history.length === 0) {
+        listEl.innerHTML = "<p style='color: var(--text-light); font-size: 13px;'>暂无记录</p>";
+      } else {
+        listEl.innerHTML = state.history.slice().reverse().map(h => `
+          <div class="history-item">
+            <span class="day">Day ${h.day} | ${h.visaType} | ${h.applicantName}</span>
+            <span class="result ${h.wasCorrect ? "correct" : "wrong"}">
+              ${h.decision === "approved" ? "通过" : "拒绝"} | ${h.wasCorrect ? "✓" : "✗"}
+            </span>
+          </div>
+        `).join("");
+      }
+    }
+
+    // ========== 初始化 ==========
+    window.onerror = function(msg, url, line) {
+      console.error("JS Error:", msg, "at line", line);
+      alert("JavaScript 错误: " + msg + "\n行号: " + line);
+      return true;
+    };
+
+    try {
+      initState();
+      setPhase("intro");
+    } catch (e) {
+      console.error("Init error:", e);
+    }
+  </script>
+
+</body>
+</html>
