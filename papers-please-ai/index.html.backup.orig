@@ -13,27 +13,24 @@
     }
 
     :root {
-      --bg-dark: #0a0a12;
-      --bg-panel: #0f1a0f;
-      --border-green: #3d9a3d;
-      --text-green: #5eff5e;
-      --text-dim: #4a7c4a;
-      --text-bright: #9dff9d;
-      --accent-yellow: #ffcc00;
-      --accent-red: #ff4444;
-      --accent-blue: #4488ff;
-      --white: #e0e0e0;
+      --primary: #1a2332;
+      --secondary: #2d3a4f;
+      --accent: #c9a84c;
+      --bg: #f5f0e8;
+      --text: #1a2332;
+      --text-light: #6b7280;
+      --white: #ffffff;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --border: #d1d5db;
     }
 
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
     body {
-      font-family: 'Press Start 2P', 'Courier New', monospace;
-      background: var(--bg-dark);
-      color: var(--text-green);
+      font-family: "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      line-height: 1.8;
-      font-size: 10px;
+      line-height: 1.6;
     }
 
     /* ========== 顶部状态栏 ========== */
