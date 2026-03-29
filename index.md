@@ -14,7 +14,7 @@ title: 游戏设计思考录
 
 **1. [自由的边界(Papers, Please AI版）](papers-please-ai/)** 🎮
 
-以Lucas Pope开发的《Papers, please》为灵感，使用OpenClaw开发的入境审批模拟游戏。玩家扮演米国入境审查官，和AI大模型扮演的不同背景的申请人进行自由对话，决定是否放行。放行结果对游戏结局产生影响，例如拒绝过多留学生导致科技停滞。
+以Lucas Pope开发的《Papers, please》、以及《绝区零》办证件活动玩法为灵感，使用OpenClaw开发的入境审批模拟游戏。玩家扮演米国入境审查官，和AI大模型扮演的不同背景的申请人进行自由对话，决定是否放行。放行结果对游戏结局产生影响，例如拒绝过多留学生导致科技停滞。
 
 **2. [Wireless Communication Journey](https://wvlsinvj.manus.space/)** 🌐
 
