@@ -108,22 +108,23 @@
     .trajectory-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       font-size: 12px;
     }
 
     .trajectory-label {
-      min-width: 48px;
+      min-width: 36px;
       text-align: right;
       color: var(--text-dim);
       text-transform: uppercase;
-      font-size: 10px;
+      font-size: 11px;
       letter-spacing: 1px;
+      font-weight: 600;
     }
 
     .trajectory-bar {
-      width: 80px;
-      height: 6px;
+      width: 60px;
+      height: 8px;
       background: var(--bg);
       border: 1px solid var(--border);
       overflow: hidden;
@@ -139,8 +140,9 @@
     .trajectory-fill.efficiency { background: var(--warning); }
 
     .trajectory-value {
-      min-width: 28px;
+      min-width: 32px;
       font-weight: bold;
+      font-size: 14px;
       font-family: "Courier New", monospace;
     }
 
@@ -1516,34 +1518,34 @@
   <!-- ========== 顶部状态栏 ========== -->
   <div class="topbar">
     <div class="topbar-left">
-      <div class="day-badge" id="day-badge">DAY 1</div>
-      <span style="font-size: 11px; color: var(--text-dim); letter-spacing: 2px;">DEPARTMENT OF HOMELAND SECURITY</span>
+      <div class="day-badge" id="day-badge">第 1 天</div>
+      <span style="font-size: 11px; color: var(--text-dim); letter-spacing: 2px;">美国国土安全部 · DHS</span>
     </div>
     <div class="topbar-right">
       <div class="trajectory-item">
-        <span class="trajectory-label">NAT-SEC</span>
+        <span class="trajectory-label">国安</span>
         <div class="trajectory-bar">
           <div class="trajectory-fill nat-sec" id="traj-nat-sec" style="width: 50%"></div>
         </div>
         <span class="trajectory-value" id="val-nat-sec">50</span>
       </div>
       <div class="trajectory-item">
-        <span class="trajectory-label">HUMAN</span>
+        <span class="trajectory-label">人道</span>
         <div class="trajectory-bar">
           <div class="trajectory-fill humanitarian" id="traj-humanitarian" style="width: 50%"></div>
         </div>
         <span class="trajectory-value" id="val-humanitarian">50</span>
       </div>
       <div class="trajectory-item">
-        <span class="trajectory-label">EFFICIENCY</span>
+        <span class="trajectory-label">效率</span>
         <div class="trajectory-bar">
           <div class="trajectory-fill efficiency" id="traj-efficiency" style="width: 50%"></div>
         </div>
         <span class="trajectory-value" id="val-efficiency">50</span>
       </div>
-      <button class="save-btn" onclick="toggleHistory()">RECORDS</button>
-      <button class="save-btn" onclick="saveGame()">SAVE</button>
-      <button class="save-btn" onclick="loadGame()">LOAD</button>
+      <button class="save-btn" onclick="toggleHistory()">📜 记录</button>
+      <button class="save-btn" onclick="saveGame()">💾 保存</button>
+      <button class="save-btn" onclick="loadGame()">📂 读取</button>
     </div>
   </div>
 
@@ -1570,7 +1572,7 @@
     <div id="view-briefing" class="view">
       <div class="briefing-card">
         <div class="briefing-header">
-          <h2>📋 DAY <span id="brief-day">1</span> · 自由的边界 · Papers Please AI版</h2>
+          <h2>📋 第 <span id="brief-day">1</span> 天 · 自由的边界 · Papers Please AI版</h2>
         </div>
         <div class="briefing-body">
           <div class="briefing-stats">
@@ -1708,7 +1710,7 @@
     <div id="view-dayend" class="view">
       <div class="dayend-card">
         <div class="dayend-header">
-          <h2>DAY <span id="dayend-day">1</span> 结束</h2>
+          <h2>第 <span id="dayend-day">1</span> 天 结束</h2>
           <p>每日结算报告</p>
         </div>
         <div class="dayend-body">
@@ -1741,7 +1743,7 @@
           </div>
 
           <div class="dayend-actions">
-            <button class="btn-primary" onclick="nextDay()">进入 DAY <span id="next-day-num">2</span></button>
+            <button class="btn-primary" onclick="nextDay()">进入第 <span id="next-day-num">2</span> 天</button>
           </div>
         </div>
       </div>
@@ -1757,17 +1759,17 @@
         <div class="gameover-body">
           <div class="gameover-scores">
             <div class="score-card nat-sec">
-              <div class="label">国安防线</div>
+              <div class="label">国安</div>
               <div class="score" id="final-nat-sec">50</div>
               <div class="title" id="final-nat-sec-title">--</div>
             </div>
             <div class="score-card humanitarian">
-              <div class="label">人道主义</div>
+              <div class="label">人道</div>
               <div class="score" id="final-humanitarian">50</div>
               <div class="title" id="final-humanitarian-title">--</div>
             </div>
             <div class="score-card efficiency">
-              <div class="label">行政效率</div>
+              <div class="label">效率</div>
               <div class="score" id="final-efficiency">50</div>
               <div class="title" id="final-efficiency-title">--</div>
             </div>
@@ -1948,7 +1950,7 @@
     }
 
     function updateTopBar() {
-      document.getElementById("day-badge").textContent = `DAY ${state.day}`;
+      document.getElementById("day-badge").textContent = `第 ${state.day} 天`;
       updateTrajectoryBar("nat-sec", state.stats.nationalSecurity);
       updateTrajectoryBar("humanitarian", state.stats.humanitarian);
       updateTrajectoryBar("efficiency", state.stats.efficiency);
@@ -3407,9 +3409,9 @@ ${JSON.stringify(applicant.hidden, null, 2)}
 
       // 轨迹
       const trajectoriesHtml = [
-        { label: "国安防线", value: state.stats.nationalSecurity, class: "nat-sec" },
-        { label: "人道主义", value: state.stats.humanitarian, class: "humanitarian" },
-        { label: "行政效率", value: state.stats.efficiency, class: "efficiency" }
+        { label: "国安", value: state.stats.nationalSecurity, class: "nat-sec" },
+        { label: "人道", value: state.stats.humanitarian, class: "humanitarian" },
+        { label: "效率", value: state.stats.efficiency, class: "efficiency" }
       ].map(t => `
         <div class="dayend-trajectory">
           <div class="label">${t.label}</div>
