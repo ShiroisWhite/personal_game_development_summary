@@ -49,7 +49,11 @@ title: 游戏设计思考录
 
 ### 🕹️ 实践项目
 
-**1. [Wireless Communication Journey](https://wvlsinvj.manus.space/)** 🌐
+**1. [Papers Please AI版](papers-please-ai/)** 🎮
+
+使用 HTML5 + JavaScript + GPT API 开发的签证审批模拟游戏。玩家扮演签证官，在 GPT 扮演的申请人和现实世界偏见之间做出判断，包含 15 名申请人、6 种结局以及追求政治正确的评分挑战。
+
+**2. [Wireless Communication Journey](https://wvlsinvj.manus.space/)** 🌐
 
 使用Manus开发的网页小游戏，通俗地解释了信息从发送者传输到接收者的全过程及其原理。
 
