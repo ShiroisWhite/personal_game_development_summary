@@ -13,27 +13,24 @@
     }
 
     :root {
-      --bg-dark: #0a0a12;
-      --bg-panel: #0f1a0f;
-      --border-green: #3d9a3d;
-      --text-green: #5eff5e;
-      --text-dim: #4a7c4a;
-      --text-bright: #9dff9d;
-      --accent-yellow: #ffcc00;
-      --accent-red: #ff4444;
-      --accent-blue: #4488ff;
-      --white: #e0e0e0;
+      --primary: #1a2332;
+      --secondary: #2d3a4f;
+      --accent: #c9a84c;
+      --bg: #f5f0e8;
+      --text: #1a2332;
+      --text-light: #6b7280;
+      --white: #ffffff;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --border: #d1d5db;
     }
 
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
     body {
-      font-family: 'Press Start 2P', 'Courier New', monospace;
-      background: var(--bg-dark);
-      color: var(--text-green);
+      font-family: "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      line-height: 1.8;
-      font-size: 10px;
+      line-height: 1.6;
     }
 
     /* ========== 顶部状态栏 ========== */
@@ -1688,7 +1685,7 @@
         efficiency: 0.3
       },
       getApiKey: () => {
-        return ""; // API key 由 Worker 端管理，客户端不传输
+        return "";
       }
     };
 
@@ -2078,7 +2075,6 @@
 
     async function translateToEnglish(text) {
       const apiKey = CONFIG.getApiKey();
-      if (!apiKey) return text;
 
       // 如果文本看起来是英文，直接返回
       if (/^[a-zA-Z\s\d,.?!'\"-]+$/.test(text) && text.length > 20) {
@@ -2092,12 +2088,12 @@ Text: ${text}
 Return JSON format: {"english":"English translation"}`;
 
       try {
+        const headers = { "Content-Type": "application/json" };
+        if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+
         const response = await fetch(CONFIG.API_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`
-          },
+          headers,
           body: JSON.stringify({
             model: CONFIG.MODEL,
             messages: [{ role: "user", content: prompt }],
@@ -2123,7 +2119,6 @@ Return JSON format: {"english":"English translation"}`;
 
     async function translateText(text) {
       const apiKey = CONFIG.getApiKey();
-      if (!apiKey) return "";
 
       const prompt = `Translate the following English text to Chinese. This is a U.S. visa interview context. Use correct terminology:
 - "officer" should be translated as "签证官" (not 警官)
@@ -2138,12 +2133,12 @@ Text: ${text}
 Return JSON format: {"translation":"中文翻译"}`;
 
       try {
+        const headers = { "Content-Type": "application/json" };
+        if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+
         const response = await fetch(CONFIG.API_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`
-          },
+          headers,
           body: JSON.stringify({
             model: CONFIG.MODEL,
             messages: [{ role: "user", content: prompt }],
@@ -2313,9 +2308,6 @@ Return JSON format: {"translation":"中文翻译"}`;
 
     async function generateNPCResponse(playerQuestion) {
       const apiKey = CONFIG.getApiKey();
-      if (!apiKey) {
-        throw new Error("NO_API_KEY");
-      }
 
       const applicant = getCurrentApplicant();
       if (!applicant) throw new Error("No applicant");
@@ -2363,12 +2355,12 @@ ${playerQuestion}
 {"answer":"申请人的英文回答","translation":"中文翻译","emotion":"情绪状态","clue":null|"宽泛提示"}
 `;
 
+      const headers = { "Content-Type": "application/json" };
+      if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+
       const response = await fetch(CONFIG.API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
+        headers,
         body: JSON.stringify({
           model: CONFIG.MODEL,
           messages: [
@@ -2439,8 +2431,6 @@ ${playerQuestion}
 
     async function generateSuggestedQuestions() {
       const apiKey = CONFIG.getApiKey();
-      console.log("generateSuggestedQuestions called, apiKey:", apiKey ? "present" : "missing");
-      if (!apiKey) return [];
 
       const applicant = getCurrentApplicant();
       if (!applicant) {
@@ -2502,12 +2492,12 @@ IMPORTANT: Return questions in bilingual format (English + Chinese). Use this JS
 {"questions":[{"en":"English question","zh":"中文问题"},{"en":"...","zh":"..."}]}`;
 
       try {
+        const headers = { "Content-Type": "application/json" };
+        if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+
         const response = await fetch(CONFIG.API_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`
-          },
+          headers,
           body: JSON.stringify({
             model: CONFIG.MODEL,
             messages: [
@@ -2677,7 +2667,6 @@ ${dailyFocus}
 
     async function analyzeMaterials(applicant) {
       const apiKey = CONFIG.getApiKey();
-      if (!apiKey) throw new Error("NO_API_KEY");
 
       const systemPrompt = `你是签证材料审查专家。给定一名申请人的材料和背景，判断材料是否有矛盾或可疑之处。
 输出格式：
@@ -2701,12 +2690,12 @@ ${JSON.stringify(applicant.application, null, 2)}
 ${JSON.stringify(applicant.hidden, null, 2)}
 `;
 
+      const headers = { "Content-Type": "application/json" };
+      if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+
       const response = await fetch(CONFIG.API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
+        headers,
         body: JSON.stringify({
           model: CONFIG.MODEL,
           messages: [
@@ -2762,7 +2751,6 @@ ${JSON.stringify(applicant.hidden, null, 2)}
     // AI语义判断函数：判断真实目的与声称目的是否语义等价
     async function judgePurposeWithAI(truePurpose, statedPurpose) {
       const apiKey = CONFIG.getApiKey();
-      if (!apiKey) return null; // 无API时返回null，使用本地判断
 
       const systemPrompt = `你是一个严格的签证审核语义分析专家。
 任务：判断申请人的"真实目的"和"声称目的"是否语义上等价（可以表达方式不同，但实质相同）。
@@ -2784,12 +2772,12 @@ ${JSON.stringify(applicant.hidden, null, 2)}
 请判断这两者是否语义等价。`;
 
       try {
+        const headers = { "Content-Type": "application/json" };
+        if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+
         const response = await fetch(CONFIG.API_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`
-          },
+          headers,
           body: JSON.stringify({
             model: CONFIG.MODEL,
             messages: [
