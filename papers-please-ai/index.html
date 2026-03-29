@@ -1674,7 +1674,7 @@
     const CONFIG = {
       API_URL: "https://api.siliconflow.cn/v1/chat/completions",
       MODEL: "deepseek-ai/DeepSeek-V3",
-      API_KEY: "sk-pisgdenzcpdpbzkilslffmostkstexeoqpnlzjetzduegqrt",
+      API_KEY: "",
       MAX_TIME_PER_APPLICANT: 5,
       MATERIAL_CHECK_COST: 2,
       MAX_DAY: 10,
@@ -1685,7 +1685,7 @@
         efficiency: 0.3
       },
       getApiKey: () => {
-        return CONFIG.API_KEY;
+        return localStorage.getItem("visa_api_key") || "";
       }
     };
 
