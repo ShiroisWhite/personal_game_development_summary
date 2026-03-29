@@ -1672,7 +1672,7 @@
   <script>
     // ========== 配置 ==========
     const CONFIG = {
-      API_URL: "https://api.siliconflow.cn/v1/chat/completions",
+      API_URL: "https://morning-shadow-2113.bzczichenbai.workers.dev/",
       MODEL: "deepseek-ai/DeepSeek-V3",
       API_KEY: "",
       MAX_TIME_PER_APPLICANT: 5,
@@ -1685,7 +1685,7 @@
         efficiency: 0.3
       },
       getApiKey: () => {
-        return localStorage.getItem("visa_api_key") || "";
+        return ""; // API key 由 Worker 端管理，客户端不传输
       }
     };
 
