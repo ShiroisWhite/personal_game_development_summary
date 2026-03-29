@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>自由的边界 · Papers Please AI版</title>
   <style>
-    /* ========== 全局样式 ========== */
+    /* ========== 全局样式 - 美国入境审查风格 ========== */
     * {
       margin: 0;
       padding: 0;
@@ -13,31 +13,39 @@
     }
 
     :root {
-      --primary: #1a2332;
-      --secondary: #2d3a4f;
-      --accent: #c9a84c;
-      --bg: #f5f0e8;
-      --text: #1a2332;
-      --text-light: #6b7280;
+      --primary: #0d1b2a;      /* 深海蓝 - 主色 */
+      --secondary: #1b263b;    /* 藏青 */
+      --accent: #e0a820;       /* 金色 - 点缀 */
+      --accent-red: #c41e3a;   /* 国安红 */
+      --bg: #0a1628;           /* 深色背景 */
+      --bg-card: #132238;      /* 卡片背景 */
+      --bg-light: #1a3352;     /* 浅色区域 */
+      --text: #e8e8e8;         /* 浅色文字 */
+      --text-dim: #8899aa;     /* 暗淡文字 */
+      --text-light: #aabbcc;    /* 次要文字 */
       --white: #ffffff;
-      --danger: #dc2626;
-      --success: #16a34a;
-      --border: #d1d5db;
+      --danger: #ff4757;
+      --success: #2ed573;
+      --warning: #ffa502;
+      --border: #2a4066;
+      --stamp-red: #c41e3a;
+      --stamp-green: #16a34a;
     }
 
     body {
-      font-family: "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+      font-family: "Courier New", "Consolas", monospace;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
     }
 
-    /* ========== 顶部状态栏 ========== */
+    /* ========== 顶部状态栏 - HUD 风格 ========== */
     .topbar {
-      background: var(--primary);
+      background: linear-gradient(180deg, var(--secondary) 0%, var(--primary) 100%);
+      border-bottom: 2px solid var(--accent);
       color: var(--white);
-      padding: 12px 24px;
+      padding: 10px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -46,7 +54,7 @@
       left: 0;
       right: 0;
       z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
 
     .topbar-left {
@@ -59,15 +67,24 @@
       background: var(--accent);
       color: var(--primary);
       padding: 6px 16px;
-      border-radius: 4px;
       font-weight: bold;
       font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 10px rgba(224, 168, 32, 0.3);
+    }
+
+    . CBP-logo {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
     }
 
     .topbar-right {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 20px;
     }
 
     .save-btn {
@@ -75,9 +92,10 @@
       border: 1px solid var(--accent);
       color: var(--accent);
       padding: 6px 12px;
-      border-radius: 4px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
+      font-family: inherit;
+      letter-spacing: 1px;
       transition: all 0.2s;
     }
 
@@ -86,47 +104,51 @@
       color: var(--primary);
     }
 
-    /* 轨迹条 */
+    /* 轨迹条 - HUD 风格 */
     .trajectory-item {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 13px;
+      font-size: 12px;
     }
 
     .trajectory-label {
-      min-width: 60px;
+      min-width: 48px;
       text-align: right;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 1px;
     }
 
     .trajectory-bar {
-      width: 100px;
-      height: 8px;
-      background: var(--secondary);
-      border-radius: 4px;
+      width: 80px;
+      height: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border);
       overflow: hidden;
     }
 
     .trajectory-fill {
       height: 100%;
       transition: width 0.5s ease;
-      border-radius: 4px;
     }
 
-    .trajectory-fill.nat-sec { background: var(--danger); }
+    .trajectory-fill.nat-sec { background: var(--accent-red); }
     .trajectory-fill.humanitarian { background: var(--success); }
-    .trajectory-fill.efficiency { background: var(--accent); }
+    .trajectory-fill.efficiency { background: var(--warning); }
 
     .trajectory-value {
       min-width: 28px;
       font-weight: bold;
+      font-family: "Courier New", monospace;
     }
 
     /* ========== 主内容区 ========== */
     .main-content {
-      margin-top: 60px;
-      padding: 24px;
-      max-width: 1200px;
+      margin-top: 56px;
+      padding: 20px;
+      max-width: 1400px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -140,92 +162,109 @@
       display: block;
     }
 
-    /* ========== intro 视图 (API Key 输入) ========== */
+    /* ========== intro 视图 (开场) ========== */
     .intro-container {
-      min-height: calc(100vh - 60px);
+      min-height: calc(100vh - 56px);
       display: flex;
       align-items: center;
       justify-content: center;
+      background: radial-gradient(ellipse at center, var(--bg-light) 0%, var(--bg) 70%);
     }
 
     .intro-box {
-      background: var(--white);
-      border-radius: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       padding: 48px;
-      max-width: 500px;
+      max-width: 560px;
       width: 100%;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       text-align: center;
+      position: relative;
+    }
+
+    .intro-box::before {
+      content: "DEPARTMENT OF HOMELAND SECURITY";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      padding: 4px 16px;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      border: 1px solid var(--accent);
     }
 
     .intro-box h1 {
-      color: var(--primary);
+      color: var(--text);
       margin-bottom: 8px;
-      font-size: 28px;
+      font-size: 32px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-top: 16px;
     }
 
     .intro-box .subtitle {
-      color: var(--text-light);
+      color: var(--accent);
       margin-bottom: 32px;
       font-size: 14px;
+      letter-spacing: 2px;
     }
 
-    .intro-box input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid var(--border);
-      border-radius: 6px;
-      font-size: 16px;
-      margin-bottom: 16px;
-      transition: border-color 0.2s;
-    }
-
-    .intro-box input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .intro-box .hint {
+    .intro-box p {
       color: var(--text-light);
-      font-size: 12px;
-      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 32px;
+      text-align: left;
+      padding: 16px;
+      border-left: 3px solid var(--accent);
+      background: rgba(224, 168, 32, 0.05);
     }
 
     .intro-box button {
-      background: var(--primary);
-      color: var(--white);
+      background: var(--accent);
+      color: var(--primary);
       border: none;
-      padding: 14px 32px;
-      border-radius: 6px;
+      padding: 16px 48px;
       font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
       cursor: pointer;
       width: 100%;
-      transition: background 0.2s;
+      transition: all 0.2s;
+      font-family: inherit;
     }
 
     .intro-box button:hover {
-      background: var(--secondary);
+      background: var(--white);
+      box-shadow: 0 0 20px rgba(224, 168, 32, 0.4);
     }
 
-    /* ========== Briefing 视图 (早晨简报) ========== */
+    /* ========== Briefing 视图 (每日简报) ========== */
     .briefing-card {
-      background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       overflow: hidden;
+      max-width: 700px;
+      margin: 40px auto;
     }
 
     .briefing-header {
-      background: var(--primary);
+      background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
       color: var(--white);
       padding: 20px 24px;
+      border-bottom: 2px solid var(--accent);
     }
 
     .briefing-header h2 {
-      font-size: 18px;
+      font-size: 16px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
     .briefing-body {
@@ -241,20 +280,24 @@
 
     .briefing-stat {
       background: var(--bg);
-      padding: 16px;
-      border-radius: 6px;
+      border: 1px solid var(--border);
+      padding: 20px 16px;
       text-align: center;
     }
 
     .briefing-stat .value {
-      font-size: 24px;
+      font-size: 28px;
       font-weight: bold;
-      color: var(--primary);
+      color: var(--accent);
+      font-family: "Courier New", monospace;
     }
 
     .briefing-stat .label {
-      font-size: 13px;
-      color: var(--text-light);
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 4px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .briefing-divider {
@@ -264,40 +307,42 @@
     }
 
     .briefing-focus {
-      background: #fef3c7;
-      border: 1px solid #f59e0b;
-      border-radius: 6px;
+      background: rgba(224, 168, 32, 0.1);
+      border: 1px solid var(--accent);
       padding: 16px;
       margin-bottom: 20px;
     }
 
     .briefing-focus h4 {
-      color: #92400e;
-      font-size: 14px;
+      color: var(--accent);
+      font-size: 12px;
       margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .briefing-focus p {
-      color: #78350f;
+      color: var(--text);
       font-size: 14px;
     }
 
     .briefing-events {
-      background: #fee2e2;
-      border: 1px solid #ef4444;
-      border-radius: 6px;
+      background: rgba(196, 30, 58, 0.1);
+      border: 1px solid var(--accent-red);
       padding: 16px;
       margin-bottom: 20px;
     }
 
     .briefing-events h4 {
-      color: #991b1b;
-      font-size: 14px;
+      color: var(--accent-red);
+      font-size: 12px;
       margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .briefing-events p {
-      color: #7f1d1d;
+      color: var(--text);
       font-size: 14px;
     }
 
@@ -309,167 +354,200 @@
     }
 
     .btn-primary {
-      background: var(--primary);
-      color: var(--white);
+      background: var(--accent);
+      color: var(--primary);
       border: none;
-      padding: 12px 32px;
-      border-radius: 6px;
-      font-size: 15px;
+      padding: 14px 40px;
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s;
+      font-family: inherit;
     }
 
     .btn-primary:hover {
-      background: var(--secondary);
+      background: var(--white);
+      box-shadow: 0 0 20px rgba(224, 168, 32, 0.3);
     }
 
     .btn-secondary {
-      background: var(--white);
-      color: var(--primary);
-      border: 2px solid var(--primary);
-      padding: 12px 32px;
-      border-radius: 6px;
-      font-size: 15px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 14px 40px;
+      font-size: 14px;
+      letter-spacing: 1px;
       cursor: pointer;
       transition: all 0.2s;
+      font-family: inherit;
     }
 
     .btn-secondary:hover {
-      background: var(--primary);
-      color: var(--white);
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
-    /* ========== Interview 视图 (面谈) ========== */
+    /* ========== Interview 视图 (面谈) - 终端风格 ========== */
     .interview-container {
       display: grid;
-      grid-template-columns: 350px 1fr;
-      gap: 24px;
-      height: calc(100vh - 120px);
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+      height: calc(100vh - 100px);
     }
 
     .applicant-card {
-      background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
     .applicant-header {
-      background: var(--primary);
+      background: linear-gradient(180deg, var(--secondary) 0%, var(--primary) 100%);
       color: var(--white);
       padding: 16px;
       text-align: center;
+      border-bottom: 2px solid var(--accent);
     }
 
     .applicant-avatar {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: var(--secondary);
+      width: 72px;
+      height: 72px;
+      background: var(--bg);
       margin: 0 auto 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
-      border: 3px solid var(--accent);
+      font-size: 32px;
+      border: 2px solid var(--accent);
+      position: relative;
+    }
+
+    .applicant-avatar::after {
+      content: "PASSPORT PHOTO";
+      position: absolute;
+      bottom: -16px;
+      font-size: 6px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
     }
 
     .applicant-name {
       font-size: 18px;
       font-weight: bold;
       margin-bottom: 4px;
+      letter-spacing: 1px;
     }
 
     .applicant-type {
-      font-size: 13px;
-      opacity: 0.8;
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 1px;
     }
 
     .applicant-body {
       padding: 16px;
       flex: 1;
       overflow-y: auto;
+      background: var(--bg);
     }
 
     .applicant-info {
-      font-size: 13px;
-      color: var(--text-light);
+      font-size: 12px;
+      color: var(--text-dim);
       margin-bottom: 16px;
+      font-family: "Courier New", monospace;
     }
 
     .applicant-info p {
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 4px;
+    }
+
+    .applicant-info span {
+      color: var(--text-light);
     }
 
     .applicant-docs {
-      background: var(--bg);
-      border-radius: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       padding: 12px;
       margin-bottom: 16px;
     }
 
     .applicant-docs h5 {
-      font-size: 13px;
-      color: var(--text-light);
+      font-size: 11px;
+      color: var(--accent);
       margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .doc-tag {
       display: inline-block;
-      background: var(--white);
+      background: var(--bg);
       border: 1px solid var(--border);
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 12px;
+      padding: 4px 8px;
+      font-size: 11px;
       margin: 2px;
+      color: var(--text-light);
     }
 
     .applicant-materials {
-      font-size: 13px;
+      font-size: 12px;
     }
 
     .applicant-materials h5 {
-      color: var(--text-light);
+      color: var(--accent);
       margin-bottom: 8px;
-      font-size: 13px;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .material-item {
       margin-bottom: 8px;
       padding: 8px;
-      background: var(--bg);
-      border-radius: 4px;
+      background: var(--bg-card);
+      border-left: 2px solid var(--accent);
     }
 
     .material-item .label {
-      color: var(--text-light);
-      font-size: 12px;
+      color: var(--text-dim);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .material-item .value {
-      font-size: 13px;
+      font-size: 12px;
       margin-top: 2px;
+      color: var(--text);
     }
 
     .material-report-section {
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px dashed var(--border);
+      border-top: 1px solid var(--border);
     }
 
     .material-report-section h5 {
       cursor: pointer;
       user-select: none;
-      font-size: 13px;
-      color: var(--primary);
+      font-size: 11px;
+      color: var(--accent);
       margin: 0;
       display: flex;
       align-items: center;
       gap: 6px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .material-report-section h5:hover {
@@ -488,40 +566,47 @@
     .material-report-content {
       margin-top: 8px;
       padding: 10px;
-      background: #fef3c7;
-      border-radius: 6px;
-      font-size: 12px;
+      background: rgba(224, 168, 32, 0.1);
+      border: 1px solid var(--accent);
+      font-size: 11px;
       line-height: 1.5;
-      color: #92400e;
+      color: var(--text);
       white-space: pre-wrap;
+      font-family: "Courier New", monospace;
     }
 
-    /* 聊天面板 */
+    /* 聊天面板 - 终端风格 */
     .chat-panel {
-      background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
     .chat-header {
-      background: var(--primary);
+      background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
       color: var(--white);
       padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chat-header span:first-child {
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 12px;
     }
 
     .time-budget {
       background: var(--accent);
       color: var(--primary);
       padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
+      font-family: "Courier New", monospace;
     }
 
     .chat-messages {
@@ -531,10 +616,11 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      background: var(--bg);
     }
 
     .message {
-      max-width: 80%;
+      max-width: 85%;
       animation: fadeIn 0.3s ease;
     }
 
@@ -553,44 +639,49 @@
 
     .message-content {
       padding: 12px 16px;
-      border-radius: 12px;
-      font-size: 14px;
-      line-height: 1.5;
+      font-size: 13px;
+      line-height: 1.6;
+      font-family: "Courier New", monospace;
     }
 
     .message.npc .message-content {
-      background: var(--bg);
-      border-bottom-left-radius: 4px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      color: var(--text);
     }
 
     .message.player .message-content {
       background: var(--primary);
-      color: var(--white);
-      border-bottom-right-radius: 4px;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      font-weight: bold;
     }
 
     .message-meta {
-      font-size: 11px;
-      color: var(--text-light);
+      font-size: 10px;
+      color: var(--text-dim);
       margin-top: 4px;
       display: flex;
       align-items: center;
       gap: 8px;
+      letter-spacing: 1px;
     }
 
     .emotion-tag {
       display: inline-block;
       padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
-    .emotion-tag.calm { background: #d1fae5; color: #065f46; }
-    .emotion-tag.nervous { background: #fef3c7; color: #92400e; }
-    .emotion-tag.defensive { background: #fed7aa; color: #9a3412; }
-    .emotion-tag.evasive { background: #fecaca; color: #991b1b; }
-    .emotion-tag.hostile { background: #ef4444; color: #ffffff; }
+    .emotion-tag.calm { background: rgba(46, 213, 115, 0.2); color: var(--success); border: 1px solid var(--success); }
+    .emotion-tag.nervous { background: rgba(255, 165, 2, 0.2); color: var(--warning); border: 1px solid var(--warning); }
+    .emotion-tag.defensive { background: rgba(255, 71, 87, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+    .emotion-tag.evasive { background: rgba(196, 30, 58, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red); }
+    .emotion-tag.hostile { background: var(--accent-red); color: var(--white); }
 
     /* 打字提示动画 */
     .typing-content {
@@ -603,8 +694,7 @@
     .typing-dot {
       width: 8px;
       height: 8px;
-      background: #9ca3af;
-      border-radius: 50%;
+      background: var(--accent);
       animation: typing-bounce 1.4s infinite ease-in-out;
     }
 
@@ -624,29 +714,29 @@
     }
 
     .clue-alert {
-      background: #fee2e2;
-      border: 1px solid #ef4444;
-      border-radius: 6px;
+      background: rgba(196, 30, 58, 0.1);
+      border: 1px solid var(--accent-red);
       padding: 8px 12px;
       margin-top: 8px;
-      font-size: 13px;
-      color: #991b1b;
+      font-size: 12px;
+      color: var(--danger);
+      font-family: "Courier New", monospace;
     }
 
     .message-translation {
-      font-size: 13px;
-      color: var(--text-light);
+      font-size: 12px;
+      color: var(--text-dim);
       margin-top: 6px;
       padding: 8px 12px;
-      background: #f0f9ff;
-      border-radius: 6px;
-      border-left: 3px solid #3b82f6;
+      background: rgba(224, 168, 32, 0.05);
+      border-left: 2px solid var(--accent);
       font-style: italic;
+      font-family: "Courier New", monospace;
     }
 
     .suggested-questions {
       padding: 12px 16px;
-      background: #fafafa;
+      background: var(--bg-card);
       border-top: 1px solid var(--border);
       display: none;
     }
@@ -656,9 +746,11 @@
     }
 
     .suggested-questions-label {
-      font-size: 12px;
-      color: var(--text-light);
+      font-size: 11px;
+      color: var(--accent);
       margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .suggested-questions-list {
@@ -668,37 +760,37 @@
     }
 
     .suggestion-btn {
-      background: white;
+      background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 6px 12px;
-      font-size: 13px;
-      color: var(--text);
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-light);
       cursor: pointer;
       transition: all 0.2s;
       text-align: left;
       line-height: 1.4;
+      font-family: inherit;
     }
 
     .suggestion-btn:hover {
       background: var(--primary);
-      color: white;
-      border-color: var(--primary);
+      color: var(--accent);
+      border-color: var(--accent);
     }
 
     .suggestion-btn:hover .suggestion-zh {
-      color: rgba(255, 255, 255, 0.8);
+      color: var(--text-dim);
     }
 
     .suggestion-zh {
-      font-size: 12px;
-      color: var(--text-light);
+      font-size: 11px;
+      color: var(--text-dim);
       margin-top: 2px;
     }
 
     .chat-input-area {
       padding: 16px;
-      background: var(--bg);
+      background: var(--bg-card);
       border-top: 1px solid var(--border);
     }
 
@@ -711,10 +803,11 @@
     .chat-input {
       flex: 1;
       padding: 12px 16px;
-      border: 2px solid var(--border);
-      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
       font-size: 14px;
-      font-family: inherit;
+      font-family: "Courier New", monospace;
       transition: border-color 0.2s;
     }
 
@@ -723,23 +816,31 @@
       border-color: var(--accent);
     }
 
+    .chat-input::placeholder {
+      color: var(--text-dim);
+    }
+
     .btn-send {
-      background: var(--primary);
-      color: var(--white);
+      background: var(--accent);
+      color: var(--primary);
       border: none;
       padding: 12px 24px;
-      border-radius: 6px;
       cursor: pointer;
-      font-size: 14px;
-      transition: background 0.2s;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: inherit;
+      transition: all 0.2s;
     }
 
     .btn-send:hover {
-      background: var(--secondary);
+      background: var(--white);
     }
 
     .btn-send:disabled {
-      background: var(--text-light);
+      background: var(--text-dim);
+      color: var(--bg);
       cursor: not-allowed;
     }
 
@@ -750,91 +851,108 @@
     }
 
     .btn-check {
-      background: #3b82f6;
-      color: white;
-      border: none;
+      background: transparent;
+      color: var(--text-light);
+      border: 1px solid var(--border);
       padding: 8px 16px;
-      border-radius: 6px;
       cursor: pointer;
-      font-size: 13px;
-      transition: background 0.2s;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: inherit;
+      transition: all 0.2s;
     }
 
     .btn-check:hover {
-      background: #2563eb;
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
     .btn-check:disabled {
-      background: var(--text-light);
+      color: var(--text-dim);
       cursor: not-allowed;
     }
 
     .btn-approve {
       background: var(--success);
-      color: white;
+      color: var(--bg);
       border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
+      padding: 8px 20px;
       cursor: pointer;
       font-size: 13px;
-      transition: background 0.2s;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: inherit;
+      transition: all 0.2s;
     }
 
     .btn-approve:hover {
-      background: #15803d;
+      box-shadow: 0 0 15px rgba(46, 213, 115, 0.5);
     }
 
     .btn-reject {
       background: var(--danger);
-      color: white;
+      color: var(--bg);
       border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
+      padding: 8px 20px;
       cursor: pointer;
       font-size: 13px;
-      transition: background 0.2s;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: inherit;
+      transition: all 0.2s;
     }
 
     .btn-reject:hover {
-      background: #b91c1c;
+      box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
     }
 
     /* ========== Judgment 视图 ========== */
     .judgment-card {
-      background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       overflow: hidden;
       max-width: 600px;
-      margin: 0 auto;
+      margin: 20px auto;
     }
 
     .judgment-header {
       padding: 24px;
       text-align: center;
+      background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+      border-bottom: 2px solid var(--border);
     }
 
     .judgment-header h2 {
-      font-size: 24px;
-      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
     }
 
     .judgment-header .decision {
-      font-size: 18px;
+      font-size: 28px;
       font-weight: bold;
-      padding: 8px 24px;
-      border-radius: 6px;
+      padding: 12px 32px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
       display: inline-block;
+      border: 2px solid;
     }
 
     .judgment-header .decision.approved {
-      background: #d1fae5;
-      color: #065f46;
+      color: var(--success);
+      border-color: var(--success);
+      text-shadow: 0 0 10px rgba(46, 213, 115, 0.5);
     }
 
     .judgment-header .decision.rejected {
-      background: #fee2e2;
-      color: #991b1b;
+      color: var(--danger);
+      border-color: var(--danger);
+      text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
     }
 
     .judgment-body {
@@ -846,39 +964,42 @@
     }
 
     .judgment-section h4 {
-      font-size: 14px;
-      color: var(--text-light);
+      font-size: 11px;
+      color: var(--accent);
       margin-bottom: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
     .judgment-section p {
-      font-size: 14px;
+      font-size: 13px;
       line-height: 1.6;
+      color: var(--text-light);
     }
 
     .judgment-result {
       padding: 12px;
-      border-radius: 6px;
       margin-bottom: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
     }
 
     .judgment-result.correct {
-      background: #d1fae5;
-      border: 1px solid #10b981;
+      border-left: 3px solid var(--success);
     }
 
     .judgment-result.wrong {
-      background: #fee2e2;
-      border: 1px solid #ef4444;
+      border-left: 3px solid var(--danger);
     }
 
     .judgment-result h4 {
-      font-size: 15px;
+      font-size: 14px;
       margin-bottom: 8px;
+      letter-spacing: 1px;
     }
 
-    .judgment-result.correct h4 { color: #065f46; }
-    .judgment-result.wrong h4 { color: #991b1b; }
+    .judgment-result.correct h4 { color: var(--success); }
+    .judgment-result.wrong h4 { color: var(--danger); }
 
     .trajectory-changes {
       display: grid;
@@ -888,19 +1009,23 @@
 
     .trajectory-change {
       text-align: center;
-      padding: 12px;
+      padding: 16px 12px;
       background: var(--bg);
-      border-radius: 6px;
+      border: 1px solid var(--border);
     }
 
     .trajectory-change .label {
-      font-size: 12px;
-      color: var(--text-light);
+      font-size: 10px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
     }
 
     .trajectory-change .delta {
       font-size: 20px;
       font-weight: bold;
+      font-family: "Courier New", monospace;
     }
 
     .trajectory-change .delta-up { color: var(--success); }
@@ -915,23 +1040,25 @@
 
     /* ========== DayEnd 视图 ========== */
     .dayend-card {
-      background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       overflow: hidden;
       max-width: 700px;
-      margin: 0 auto;
+      margin: 20px auto;
     }
 
     .dayend-header {
-      background: var(--primary);
+      background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
       color: var(--white);
-      padding: 20px 24px;
+      padding: 24px;
       text-align: center;
+      border-bottom: 2px solid var(--accent);
     }
 
     .dayend-header h2 {
-      font-size: 22px;
+      font-size: 20px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
       margin-bottom: 4px;
     }
 
@@ -950,18 +1077,22 @@
       text-align: center;
       padding: 16px;
       background: var(--bg);
-      border-radius: 6px;
+      border: 1px solid var(--border);
     }
 
     .dayend-stat .value {
       font-size: 24px;
       font-weight: bold;
-      color: var(--primary);
+      color: var(--accent);
+      font-family: "Courier New", monospace;
     }
 
     .dayend-stat .label {
-      font-size: 12px;
-      color: var(--text-light);
+      font-size: 10px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
     }
 
     .dayend-trajectories {
@@ -977,60 +1108,65 @@
 
     .dayend-trajectory .label {
       width: 80px;
-      font-size: 13px;
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .dayend-trajectory .bar {
       flex: 1;
-      height: 12px;
-      background: var(--border);
-      border-radius: 6px;
+      height: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
       overflow: hidden;
     }
 
     .dayend-trajectory .bar-fill {
       height: 100%;
-      border-radius: 6px;
       transition: width 0.5s;
     }
 
-    .dayend-trajectory .bar-fill.nat-sec { background: var(--danger); }
+    .dayend-trajectory .bar-fill.nat-sec { background: var(--accent-red); }
     .dayend-trajectory .bar-fill.humanitarian { background: var(--success); }
-    .dayend-trajectory .bar-fill.efficiency { background: var(--accent); }
+    .dayend-trajectory .bar-fill.efficiency { background: var(--warning); }
 
     .dayend-trajectory .value {
-      width: 80px;
+      width: 40px;
       text-align: right;
       font-size: 13px;
       font-weight: bold;
+      font-family: "Courier New", monospace;
     }
 
     .dayend-narrative {
       background: var(--bg);
-      border-radius: 6px;
+      border: 1px solid var(--border);
       padding: 16px;
-      font-size: 14px;
+      font-size: 13px;
       line-height: 1.8;
-      color: var(--text);
+      color: var(--text-light);
       margin-bottom: 24px;
+      font-family: "Courier New", monospace;
     }
 
     .dayend-events {
-      background: #fef3c7;
-      border: 1px solid #f59e0b;
-      border-radius: 6px;
+      background: rgba(224, 168, 32, 0.1);
+      border: 1px solid var(--accent);
       padding: 16px;
       margin-bottom: 24px;
     }
 
     .dayend-events h4 {
-      color: #92400e;
+      color: var(--accent);
       margin-bottom: 8px;
-      font-size: 14px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .dayend-events p {
-      color: #78350f;
+      color: var(--text-light);
       font-size: 13px;
     }
 
@@ -1042,24 +1178,26 @@
 
     /* ========== GameOver 视图 ========== */
     .gameover-card {
-      background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       overflow: hidden;
       max-width: 700px;
-      margin: 0 auto;
+      margin: 20px auto;
     }
 
     .gameover-header {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent-red) 100%);
       color: var(--white);
-      padding: 32px 24px;
+      padding: 40px 24px;
       text-align: center;
+      border-bottom: 2px solid var(--accent);
     }
 
     .gameover-header h2 {
-      font-size: 26px;
+      font-size: 24px;
       margin-bottom: 8px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
     }
 
     .gameover-header .subtitle {
@@ -1080,58 +1218,69 @@
 
     .score-card {
       padding: 20px;
-      border-radius: 8px;
       text-align: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
     }
 
-    .score-card.nat-sec { background: #fee2e2; }
-    .score-card.humanitarian { background: #d1fae5; }
-    .score-card.efficiency { background: #fef3c7; }
+    .score-card.nat-sec { border-left: 3px solid var(--accent-red); }
+    .score-card.humanitarian { border-left: 3px solid var(--success); }
+    .score-card.efficiency { border-left: 3px solid var(--warning); }
 
     .score-card .label {
-      font-size: 13px;
+      font-size: 10px;
       margin-bottom: 8px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    .score-card.nat-sec .label { color: #991b1b; }
-    .score-card.humanitarian .label { color: #065f46; }
-    .score-card.efficiency .label { color: #92400e; }
+    .score-card.nat-sec .label { color: var(--accent-red); }
+    .score-card.humanitarian .label { color: var(--success); }
+    .score-card.efficiency .label { color: var(--warning); }
 
     .score-card .score {
       font-size: 32px;
       font-weight: bold;
+      font-family: "Courier New", monospace;
     }
 
     .score-card .title {
-      font-size: 13px;
+      font-size: 11px;
       margin-top: 4px;
-      font-style: italic;
+      color: var(--text-dim);
+      letter-spacing: 1px;
     }
 
     .gameover-total {
       text-align: center;
       padding: 24px;
       background: var(--bg);
-      border-radius: 8px;
+      border: 1px solid var(--border);
       margin-bottom: 24px;
     }
 
     .gameover-total .label {
-      font-size: 14px;
-      color: var(--text-light);
+      font-size: 11px;
+      color: var(--text-dim);
       margin-bottom: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
     .gameover-total .value {
       font-size: 48px;
       font-weight: bold;
-      color: var(--primary);
+      color: var(--accent);
+      font-family: "Courier New", monospace;
     }
 
     .gameover-total .rating {
-      font-size: 18px;
+      font-size: 14px;
       margin-top: 8px;
       color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
     .gameover-history {
@@ -1139,9 +1288,11 @@
     }
 
     .gameover-history h4 {
-      font-size: 14px;
-      color: var(--text-light);
+      font-size: 11px;
+      color: var(--accent);
       margin-bottom: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
     .history-item {
@@ -1149,13 +1300,14 @@
       justify-content: space-between;
       padding: 10px 12px;
       background: var(--bg);
-      border-radius: 6px;
+      border: 1px solid var(--border);
       margin-bottom: 8px;
-      font-size: 13px;
+      font-size: 12px;
     }
 
     .history-item .day {
-      color: var(--text-light);
+      color: var(--text-dim);
+      font-family: "Courier New", monospace;
     }
 
     .history-item .result {
@@ -1167,11 +1319,13 @@
 
     .gameover-narrative {
       background: var(--bg);
-      border-radius: 6px;
+      border: 1px solid var(--border);
       padding: 20px;
-      font-size: 14px;
+      font-size: 13px;
       line-height: 1.8;
       margin-bottom: 24px;
+      color: var(--text-light);
+      font-family: "Courier New", monospace;
     }
 
     .gameover-actions {
@@ -1186,13 +1340,14 @@
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
-      background: var(--primary);
-      color: var(--white);
+      background: var(--bg-card);
+      color: var(--text);
       padding: 12px 24px;
-      border-radius: 6px;
-      font-size: 14px;
+      border: 1px solid var(--accent);
+      font-size: 13px;
       z-index: 1000;
       animation: slideUp 0.3s ease;
+      font-family: "Courier New", monospace;
     }
 
     @keyframes slideUp {
@@ -1207,7 +1362,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(10, 22, 40, 0.9);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1215,16 +1370,16 @@
     }
 
     .loading-box {
-      background: var(--white);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       padding: 32px 48px;
-      border-radius: 8px;
       text-align: center;
     }
 
     .loading-spinner {
       width: 40px;
       height: 40px;
-      border: 4px solid var(--border);
+      border: 3px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin 1s linear infinite;
@@ -1242,7 +1397,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(10, 22, 40, 0.9);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1250,8 +1405,8 @@
     }
 
     .modal-content {
-      background: var(--white);
-      border-radius: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       max-width: 500px;
       width: 90%;
       max-height: 80vh;
@@ -1261,17 +1416,22 @@
 
     .modal-content h3 {
       margin-bottom: 16px;
-      font-size: 18px;
+      font-size: 14px;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
     .modal-content pre {
       background: var(--bg);
+      border: 1px solid var(--border);
       padding: 16px;
-      border-radius: 6px;
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.6;
       white-space: pre-wrap;
       word-break: break-word;
+      font-family: "Courier New", monospace;
+      color: var(--text-light);
     }
 
     .modal-actions {
@@ -1285,10 +1445,11 @@
       width: 100%;
       min-height: 100px;
       padding: 12px;
-      border: 2px solid var(--border);
-      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
       font-size: 14px;
-      font-family: inherit;
+      font-family: "Courier New", monospace;
       resize: vertical;
       margin-bottom: 12px;
     }
@@ -1302,11 +1463,11 @@
     .history-panel {
       position: fixed;
       right: -350px;
-      top: 60px;
+      top: 56px;
       bottom: 0;
       width: 350px;
-      background: var(--white);
-      box-shadow: -2px 0 12px rgba(0,0,0,0.1);
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
       z-index: 99;
       transition: right 0.3s ease;
       overflow-y: auto;
@@ -1318,26 +1479,35 @@
     }
 
     .history-panel h3 {
-      font-size: 16px;
+      font-size: 12px;
+      color: var(--accent);
       margin-bottom: 16px;
       padding-bottom: 12px;
       border-bottom: 1px solid var(--border);
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
     .history-toggle {
       position: fixed;
       right: 16px;
       bottom: 16px;
-      background: var(--primary);
-      color: var(--white);
-      border: none;
+      background: var(--bg-card);
+      color: var(--accent);
+      border: 1px solid var(--accent);
       width: 48px;
       height: 48px;
-      border-radius: 50%;
       cursor: pointer;
       font-size: 20px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
       z-index: 98;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .history-toggle:hover {
+      background: var(--accent);
+      color: var(--primary);
     }
   </style>
 </head>
@@ -1347,33 +1517,33 @@
   <div class="topbar">
     <div class="topbar-left">
       <div class="day-badge" id="day-badge">DAY 1</div>
-      <span style="font-size: 14px; opacity: 0.8;">自由的边界 · Papers Please AI版</span>
+      <span style="font-size: 11px; color: var(--text-dim); letter-spacing: 2px;">DEPARTMENT OF HOMELAND SECURITY</span>
     </div>
     <div class="topbar-right">
       <div class="trajectory-item">
-        <span class="trajectory-label">国安</span>
+        <span class="trajectory-label">NAT-SEC</span>
         <div class="trajectory-bar">
           <div class="trajectory-fill nat-sec" id="traj-nat-sec" style="width: 50%"></div>
         </div>
         <span class="trajectory-value" id="val-nat-sec">50</span>
       </div>
       <div class="trajectory-item">
-        <span class="trajectory-label">人道</span>
+        <span class="trajectory-label">HUMAN</span>
         <div class="trajectory-bar">
           <div class="trajectory-fill humanitarian" id="traj-humanitarian" style="width: 50%"></div>
         </div>
         <span class="trajectory-value" id="val-humanitarian">50</span>
       </div>
       <div class="trajectory-item">
-        <span class="trajectory-label">效率</span>
+        <span class="trajectory-label">EFFICIENCY</span>
         <div class="trajectory-bar">
           <div class="trajectory-fill efficiency" id="traj-efficiency" style="width: 50%"></div>
         </div>
         <span class="trajectory-value" id="val-efficiency">50</span>
       </div>
-      <button class="save-btn" onclick="toggleHistory()">📜 记录</button>
-      <button class="save-btn" onclick="saveGame()">💾 存档</button>
-      <button class="save-btn" onclick="loadGame()">📂 读档</button>
+      <button class="save-btn" onclick="toggleHistory()">RECORDS</button>
+      <button class="save-btn" onclick="saveGame()">SAVE</button>
+      <button class="save-btn" onclick="loadGame()">LOAD</button>
     </div>
   </div>
 
