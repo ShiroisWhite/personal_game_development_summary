@@ -1671,10 +1671,11 @@
 
   <script>
     // ========== 配置 ==========
+    // 注意：config.js 不提交到 Git。部署到 GitHub Pages 时请替换下方 API_KEY 为占位值。
     const CONFIG = {
-      API_URL: "https://morning-shadow-2113.bzczichenbai.workers.dev/",
+      API_URL: "https://api.siliconflow.cn/v1/chat/completions",
       MODEL: "deepseek-ai/DeepSeek-V3",
-      API_KEY: "",
+      API_KEY: "sk-placeholder-replace-with-your-key",
       MAX_TIME_PER_APPLICANT: 5,
       MATERIAL_CHECK_COST: 2,
       MAX_DAY: 10,
@@ -1685,9 +1686,26 @@
         efficiency: 0.3
       },
       getApiKey: () => {
-        return "";
+        return CONFIG.API_KEY;
       }
     };
+
+    // 尝试从本地 config.js 加载真实 API Key
+    // config.js 不提交到 Git，内容为：window.API_CONFIG = { API_KEY: "your-key" };
+    (function loadConfig() {
+      fetch("config.js?_=" + Date.now())
+        .then(r => r.text())
+        .then(text => {
+          try {
+            const match = text.match(/API_KEY:\s*["']([^"']+)["']/);
+            if (match && match[1] && !match[1].includes("placeholder")) {
+              CONFIG.API_KEY = match[1];
+              console.log("API Key loaded from config.js");
+            }
+          } catch (e) {}
+        })
+        .catch(() => {});
+    })();
 
     // ========== 游戏状态 ==========
     let state = {};
