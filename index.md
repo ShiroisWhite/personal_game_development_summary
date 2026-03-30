@@ -41,7 +41,11 @@ title: 游戏设计思考录
 
 ### 🎮 系统设计理论
 
-**1. [游戏反应模式设计策略：运动反应 vs 认知反应的选择与平衡](04-reaction-mode-design.md)** 🚧 *WIP*
+**1. [使用OpenClaw进行多agent辅助游戏设计的思考](04-reaction-mode-design)**
+
+从多Agent协作的角度，探讨了Actor-Critic架构在游戏内容设计中的应用，以及强化学习思想对设计Prompt和调度架构的启发。
+
+**2. [游戏反应模式设计策略：运动反应 vs 认知反应的选择与平衡](17-reaction-mode-design.md)** 🚧 *WIP*
 
 从反应模式分析了两类反应类型对应的游戏风格、受众以及数值设计范式区别。
 
