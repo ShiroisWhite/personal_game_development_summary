@@ -1,5 +1,6 @@
 ---
 layout: default
+title: 白紫晨 · 游戏设计思考录
 ---
 
 # 游戏设计思考录
