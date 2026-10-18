@@ -10,6 +10,57 @@ title: 游戏设计思考录
 
 ---
 
+## 🎮 系统设计理论
+
+### 📐 SOC 系统设计方法论（7 篇）
+
+<p class="method-intro">一套「沙盒生存游戏的设计尺子」。全部是<b>可迁移内核</b>——项目事实只在浅案例里作佐证，不当标准。每篇含定位三问、四种「设计死法」诊断器与决策检查清单。</p>
+
+<a class="method-index" href="{{ '/soc-methodology/' | relative_url }}">总览与使用顺序　先答灵魂问题 → 定位三问 → 四死法诊断 → 按题材查手册</a>
+
+<ul class="method-list">
+  <li>
+    <a class="method-name" href="{{ '/soc-methodology/家园系统方法论' | relative_url }}">家园系统</a>
+    <span class="method-core">家园 = 成长循环载体，非仓库；双轨成长轴</span>
+  </li>
+  <li>
+    <a class="method-name" href="{{ '/soc-methodology/载具平台系统方法论' | relative_url }}">载具平台</a>
+    <span class="method-core">平台 = 能力放大器 + 依赖链四漏勺</span>
+  </li>
+  <li>
+    <a class="method-name" href="{{ '/soc-methodology/玩法循环方法论' | relative_url }}">玩法循环</a>
+    <span class="method-core">产能 = 风险阀门 + 零和掠夺 + 正和养成回收</span>
+  </li>
+  <li>
+    <a class="method-name" href="{{ '/soc-methodology/生存属性系统方法论' | relative_url }}">生存属性</a>
+    <span class="method-core">属性三层骨架 + 互转兑换表</span>
+  </li>
+  <li>
+    <a class="method-name" href="{{ '/soc-methodology/采集链路方法论' | relative_url }}">采集链路</a>
+    <span class="method-core">先定操作粒度；采集三要素</span>
+  </li>
+  <li>
+    <a class="method-name" href="{{ '/soc-methodology/射击战斗方法论' | relative_url }}">射击战斗</a>
+    <span class="method-core">手感词条化 + 部位万分比 + 耗材净支出</span>
+  </li>
+  <li>
+    <a class="method-name" href="{{ '/soc-methodology/交互易用性方法论' | relative_url }}">交互易用性</a>
+    <span class="method-core">优化即减摩；四维判据</span>
+  </li>
+</ul>
+
+### 🔍 其他系统设计思考
+
+**1. [使用OpenClaw进行多agent辅助游戏设计的思考](04-reaction-mode-design)**
+
+从多Agent协作的角度，探讨了Actor-Critic架构在游戏内容设计中的应用，以及强化学习思想对设计Prompt和调度架构的启发。
+
+**2. [游戏反应模式设计策略：运动反应 vs 认知反应的选择与平衡](17-reaction-mode-design.md)** 🚧 *WIP*
+
+从反应模式分析了两类反应类型对应的游戏风格、受众以及数值设计范式区别。
+
+---
+
 ## 🕹️ 实践项目
 
 **1. [自由的边界(Papers, Please AI版）](papers-please-ai/)** 🎮
@@ -42,36 +93,6 @@ title: 游戏设计思考录
 **3. [恐怖黎明数值拆解V0.1](03-grim-dawn-analysis.pdf)**
 
 分析了恐怖黎明的战斗数值框架。
-
-### 📐 系统设计方法论（SOC · 7 篇）
-
-一套"沙盒生存游戏的设计尺子"，全部是**可迁移内核**——项目事实只在浅案例里作佐证，不当标准。每篇含定位三问、四种「设计死法」诊断器与决策检查清单。
-
-**0. [方法论总览与使用顺序](soc-methodology/)**　先答灵魂问题 → 再走定位三问 → 用四死法诊断 → 按题材查手册
-
-**1. [家园系统方法论](soc-methodology/家园系统方法论)**　家园 = 成长循环载体，非仓库；双轨成长轴
-
-**2. [载具平台系统方法论](soc-methodology/载具平台系统方法论)**　平台 = 能力放大器 + 依赖链四漏勺
-
-**3. [玩法循环方法论](soc-methodology/玩法循环方法论)**　产能 = 风险阀门 + 零和掠夺 + 正和养成回收
-
-**4. [生存属性系统方法论](soc-methodology/生存属性系统方法论)**　属性三层骨架 + 互转兑换表
-
-**5. [采集链路方法论](soc-methodology/采集链路方法论)**　先定操作粒度；采集三要素
-
-**6. [射击战斗方法论](soc-methodology/射击战斗方法论)**　手感词条化 + 部位万分比 + 耗材净支出
-
-**7. [交互易用性方法论](soc-methodology/交互易用性方法论)**　优化即减摩；四维判据
-
-### 🎮 系统设计理论
-
-**1. [使用OpenClaw进行多agent辅助游戏设计的思考](04-reaction-mode-design)**
-
-从多Agent协作的角度，探讨了Actor-Critic架构在游戏内容设计中的应用，以及强化学习思想对设计Prompt和调度架构的启发。
-
-**2. [游戏反应模式设计策略：运动反应 vs 认知反应的选择与平衡](17-reaction-mode-design.md)** 🚧 *WIP*
-
-从反应模式分析了两类反应类型对应的游戏风格、受众以及数值设计范式区别。
 
 ### 🤔 开发方法论
 

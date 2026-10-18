@@ -1,0 +1,389 @@
+/* ============================================================
+   游戏设计思考录 — 工程图纸 + 红线
+   Palette / Type / Layout derived from the subject:
+   一套"沙盒生存设计尺子"，每篇方法论以一条红线收尾。
+   ============================================================ */
+
+:root {
+  --paper:      #F6F7F9;
+  --paper-2:    #EDF0F4;
+  --ink:        #14203A;
+  --ink-2:      #4A5566;
+  --ink-3:      #7C8798;
+  --rule:       #D8DEE8;
+  --blue:       #2E5C8A;
+  --red:        #C0392B;
+
+  --serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --sans:  "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --mono:  ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  --measure: 720px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.85;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* 跳过链接：向上移出视口，不用负 left（会撑宽页面） */
+.skip-link {
+  position: absolute; left: 12px; top: -100px;
+  background: var(--ink); color: var(--paper);
+  padding: 10px 16px; z-index: 99;
+}
+.skip-link:focus { top: 12px; }
+
+/* ── 报头：刻度尺 ───────────────────────────── */
+
+.masthead {
+  background: var(--paper);
+  border-bottom: 1px solid var(--ink);
+  position: relative;
+}
+
+.masthead__inner {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 22px 24px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 20px;
+}
+
+/* 尺子刻度：报头下沿的长短刻痕 */
+.masthead::after {
+  content: "";
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  bottom: -9px;
+  width: min(100%, var(--measure));
+  height: 9px;
+  background-image:
+    repeating-linear-gradient(90deg, var(--ink-3) 0 1px, transparent 1px 50px),
+    repeating-linear-gradient(90deg, var(--ink-3) 0 1px, transparent 1px 10px);
+  background-size: 50px 9px, 10px 4px;
+  background-repeat: repeat-x;
+  background-position: 0 0, 0 0;
+  opacity: .55;
+}
+
+.masthead__brand {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.masthead__brand:hover { color: var(--blue); }
+
+.masthead__who {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: .08em;
+  color: var(--ink-3);
+}
+
+/* 首页的 h1 已经是站名，报头不再重复 */
+.is-home .masthead__brand { display: none; }
+
+/* ── 正文容器 ─────────────────────────────── */
+
+.page {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 64px 24px 104px;
+}
+
+/* ── 排版：标题 ───────────────────────────── */
+
+.page h1 {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 1.25;
+  letter-spacing: .01em;
+  margin: 0 0 .35em;
+  color: var(--ink);
+}
+.page h1::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-top: 20px;
+  background: var(--red);
+}
+
+.page h2 {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 2.6em 0 .5em;
+  color: var(--ink);
+}
+
+/* 源文件里 h2 前已有 --- 分隔线时不重复留白 */
+.page hr + h2 { margin-top: 0; }
+
+/* 签名元素：小节标题左侧那条红线 */
+.page h3 {
+  font-family: var(--sans);
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 2.2em 0 .8em;
+  padding-left: 13px;
+  border-left: 3px solid var(--red);
+}
+
+.page h4 {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-2);
+  margin: 1.8em 0 .5em;
+  letter-spacing: .01em;
+}
+
+.page h5 {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+  margin: 1.5em 0 .4em;
+}
+
+/* ── 排版：正文 ───────────────────────────── */
+
+.page p { margin: 0 0 1.05em; color: var(--ink-2); }
+.page > p:first-of-type { color: var(--ink-2); }
+
+.page strong { color: var(--ink); font-weight: 700; }
+
+.page a {
+  color: var(--blue);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent);
+  transition: border-color .15s ease, color .15s ease;
+}
+.page a:hover { color: var(--red); border-bottom-color: var(--red); }
+.page a:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.page ul, .page ol { margin: 0 0 1.05em; padding-left: 1.35em; color: var(--ink-2); }
+.page li { margin-bottom: .45em; }
+.page li::marker { color: var(--ink-3); }
+
+.page blockquote {
+  margin: 1.6em 0;
+  padding: 15px 18px;
+  background: var(--paper-2);
+  border-left: 3px solid var(--blue);
+  color: var(--ink-2);
+}
+.page blockquote p:last-child { margin-bottom: 0; }
+
+.page hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 2.6em 0;
+}
+
+.page code {
+  font-family: var(--mono);
+  font-size: .88em;
+  background: var(--paper-2);
+  padding: .12em .38em;
+  border-radius: 3px;
+  color: var(--ink);
+}
+.page pre {
+  background: var(--ink);
+  color: #E8ECF2;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.page pre code { background: none; color: inherit; padding: 0; }
+
+.page img { max-width: 100%; height: auto; display: block; margin: 1.4em 0; }
+
+.page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.4em 0;
+  font-size: 14.5px;
+}
+.page th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: .07em;
+  font-weight: 600;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--ink);
+  padding: 8px 10px;
+}
+.page td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-2);
+  vertical-align: top;
+}
+
+/* ── 方法论清单（首页主视觉）─────────────── */
+
+.method-intro {
+  font-size: 15.5px;
+  color: var(--ink-2);
+  margin-bottom: 1.5em;
+}
+
+.method-index {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: .05em;
+  color: var(--blue);
+  border: 1px solid var(--rule);
+  padding: 7px 13px;
+  margin-bottom: 2.2em;
+  transition: border-color .15s ease, color .15s ease;
+}
+.method-index:hover {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+.method-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: method;
+}
+
+.method-list li {
+  counter-increment: method;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: 0 14px;
+  padding: 14px 0 14px 0;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  transition: padding-left .18s ease;
+}
+
+/* 序号：跨两行，占第一列 */
+.method-list li::before {
+  content: counter(method, decimal-leading-zero);
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .05em;
+  color: var(--ink-3);
+  padding-top: .4em;
+}
+
+/* 悬停时红线滑入 —— 一条"设计尺子"的刻度感 */
+.method-list li::after {
+  content: "";
+  position: absolute;
+  left: -14px; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--red);
+  opacity: 0;
+  transform: scaleY(.4);
+  transition: opacity .18s ease, transform .18s ease;
+}
+.method-list li:hover { padding-left: 6px; }
+.method-list li:hover::after { opacity: 1; transform: scaleY(1); }
+
+.method-name {
+  grid-column: 2;
+  grid-row: 1;
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  border-bottom: none;
+  display: block;
+  line-height: 1.5;
+}
+.method-name:hover { color: var(--red); border-bottom: none; }
+
+.method-core {
+  grid-column: 2;
+  grid-row: 2;
+  display: block;
+  font-size: 14px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  margin-top: 3px;
+}
+
+/* ── 页脚 ─────────────────────────────────── */
+
+.colophon {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 26px 24px 60px;
+  border-top: 1px solid var(--ink);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: .04em;
+  color: var(--ink-3);
+}
+.colophon a { color: var(--ink-2); border-bottom: none; }
+.colophon a:hover { color: var(--red); }
+.colophon__links { display: flex; gap: 18px; }
+
+/* ── 响应式 ───────────────────────────────── */
+
+@media (max-width: 620px) {
+  body { font-size: 15.5px; }
+  .page { padding: 44px 18px 72px; }
+  .page h1 { font-size: 30px; }
+  .page h2 { font-size: 21px; margin-top: 2.2em; }
+  .page h3 { font-size: 15.5px; }
+  .method-list li { grid-template-columns: 34px 1fr; gap: 0 10px; }
+  .method-name { font-size: 15.5px; }
+  .method-core { font-size: 13.5px; }
+  .masthead__inner { padding: 18px 18px 12px; }
+  .colophon { flex-direction: column; padding: 22px 18px 48px; }
+}
+
+/* ── 无障碍：尊重减少动效 ─────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+  .method-list li:hover { padding-left: 0; }
+}

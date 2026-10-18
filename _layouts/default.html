@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  {% include head.html %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;700;900&display=swap">
+  <link rel="stylesheet" href="{{ '/assets/site.css' | relative_url }}">
+</head>
+<body class="{% if page.url == '/' %}is-home{% endif %}">
+  <a class="skip-link" href="#main">跳到正文</a>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a class="masthead__brand" href="{{ '/' | relative_url }}">游戏设计思考录</a>
+      <span class="masthead__who">白紫晨 · 系统策划 / SOC · 射击</span>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    {{ content }}
+  </main>
+
+  <footer class="colophon">
+    <span>白紫晨 · 中国科学技术大学 电子信息工程</span>
+    <span class="colophon__links">
+      <a href="mailto:bzcbzc@mail.ustc.edu.cn">bzcbzc@mail.ustc.edu.cn</a>
+      <a href="https://github.com/ShiroisWhite">GitHub</a>
+    </span>
+  </footer>
+</body>
+</html>
