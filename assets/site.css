@@ -18,7 +18,7 @@
   --sans:  "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --mono:  ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
 
-  --measure: 720px;
+  --measure: 680px;
 }
 
 * { box-sizing: border-box; }
@@ -30,8 +30,8 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 16px;
-  line-height: 1.85;
+  font-size: 17px;
+  line-height: 1.9;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -411,7 +411,7 @@ body {
 /* ── 响应式 ───────────────────────────────── */
 
 @media (max-width: 620px) {
-  body { font-size: 15.5px; }
+  body { font-size: 16.5px; }
   .page { padding: 44px 18px 72px; }
   .page h1 { font-size: 30px; }
   .page h2 { font-size: 21px; margin-top: 2.2em; }
