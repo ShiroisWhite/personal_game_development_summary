@@ -10,9 +10,9 @@ title: 游戏设计思考录
 
 ---
 
-## 🎮 系统设计理论
+## 系统设计理论
 
-### 📐 SOC 系统设计方法论（7 篇）
+### SOC 系统设计方法论（7 篇）
 
 <p class="method-intro">一套「沙盒生存游戏的设计尺子」。全部是<b>可迁移内核</b>——项目事实只在浅案例里作佐证，不当标准。每篇含定位三问、四种「设计死法」诊断器与决策检查清单。</p>
 
@@ -49,37 +49,37 @@ title: 游戏设计思考录
   </li>
 </ul>
 
-### 🔍 其他系统设计思考
+### 其他系统设计思考
 
 **1. [使用OpenClaw进行多agent辅助游戏设计的思考](04-reaction-mode-design)**
 
 从多Agent协作的角度，探讨了Actor-Critic架构在游戏内容设计中的应用，以及强化学习思想对设计Prompt和调度架构的启发。
 
-**2. [游戏反应模式设计策略：运动反应 vs 认知反应的选择与平衡](17-reaction-mode-design.md)** 🚧 *WIP*
+**2. [游戏反应模式设计策略：运动反应 vs 认知反应的选择与平衡](17-reaction-mode-design.md)**  *WIP*
 
 从反应模式分析了两类反应类型对应的游戏风格、受众以及数值设计范式区别。
 
 ---
 
-## 🕹️ 实践项目
+## 实践项目
 
-**1. [自由的边界(Papers, Please AI版）](papers-please-ai/)** 🎮
+**1. [自由的边界(Papers, Please AI版）](papers-please-ai/)**
 
 以Lucas Pope开发的《Papers, please》、以及《绝区零》办证件活动玩法为灵感，使用OpenClaw开发的入境审批模拟游戏。玩家扮演米国入境审查官，和AI大模型扮演的不同背景的申请人进行自由对话，决定是否放行。放行结果对游戏结局产生影响，例如拒绝过多留学生导致科技停滞。
 
-**2. [Wireless Communication Journey](https://wvlsinvj.manus.space/)** 🌐
+**2. [Wireless Communication Journey](https://wvlsinvj.manus.space/)**
 
 使用Manus开发的网页小游戏，通俗地解释了信息从发送者传输到接收者的全过程及其原理。
 
-**3. [领域智能助手：把项目知识变成可检索的资产](agent-design/)** 🤖
+**3. [领域智能助手：把项目知识变成可检索的资产](agent-design/)**
 
 面向游戏策划的领域智能助手设计记录：把需求文档 / 配置表 / 多语言表 / 工程代码 / 预制体组件参数五处数据源接进同一个上下文，封装成可复用的工作流模块，并把每次排查的结论沉淀成可检索的知识。重点在**「可迁移内核」与「项目事实」如何分离**。
 
 ---
 
-## 📚 设计思考集
+## 设计思考集
 
-### 📊 数值设计分析及思考
+### 数值设计分析及思考
 
 **1. [数值膨胀的升维破局：以明日方舟为例的长线游戏数值设计分析](01-arknights-analysis)**
 
@@ -94,7 +94,7 @@ title: 游戏设计思考录
 
 分析了恐怖黎明的战斗数值框架。
 
-### 🤔 开发方法论
+### 开发方法论
 
 **1. [前期开发与后验结果无法获取的矛盾](05-development-paradox.md)**
 
@@ -108,7 +108,7 @@ title: 游戏设计思考录
 
 从认知科学角度深入剖析后见之明偏差（Hindsight Bias）的形成机制，分析为什么"事后质问替代方案"是无意义的行为，总结策划工作中的常见陷阱，并提出建立健康团队文化的实践方法。
 
-### 📖 学习笔记
+### 学习笔记
 
 **1. [Java面向对象编程核心概念总结](08-java-oop-fundamentals-for-game-development)**
 
@@ -138,15 +138,15 @@ title: 游戏设计思考录
 
 转载入口与阅读笔记：从有效失败、认知卸载和 AI 辅助学习的角度，整理“先自己试错，再使用 AI”的学习流程。
 
-### 💡 行业观察
+### 行业观察
 
 **1. [VR/AR娱乐：体验的点缀，而非平面媒体的替代](15-XR-vs-phone)**
 
 从人体工程学、便携性、内容生态等维度分析为什么手机是人类娱乐的终极形态，而VR/AR只能是特定场景下的体验补充。
 
-### 🎯 游戏体验
+### 游戏体验
 
-#### 🏆 游戏成就展示
+#### 游戏成就展示
 
 **崩坏3 - 长期游玩纪录**
 
@@ -169,20 +169,25 @@ title: 游戏设计思考录
 
 ---
 
-## 🔧 关于本站
+## 关于本站
 
-- **技术栈**: GitHub Pages + Jekyll + MathJax
 - **主要内容**: 游戏数值设计、系统策划理论、实战案例分析、产品体验研究
 - **更新频率**: 持续更新，记录最新的设计思考
 
 ---
 
-## 📱 联系方式
+## 联系方式
 
-如果你对这些话题感兴趣，或想要交流游戏设计相关问题，欢迎通过以下方式联系：
+如果你对这些话题感兴趣，或想交流游戏设计相关的问题，欢迎联系我。
 
-- 📧 Email: bzcbzc@mail.ustc.edu.cn
-- 🐙 GitHub: [https://github.com/ShiroisWhite](https://github.com/ShiroisWhite)
+<div class="author-card" markdown="0">
+  <p class="author-card__name">白紫晨</p>
+  <p class="author-card__bio">中国科学技术大学电子信息工程本科，3 年游戏系统策划。最近在英雄游戏《危机曙光 CrisisX》（SOC 末日生存建造射击，对标《失控进化》《七日世界》）负责双端系统功能设计与落地；前《诸神皇冠》执行主策划，前通信算法工程师。</p>
+  <p class="author-card__links">
+    <a href="mailto:bzcbzc@mail.ustc.edu.cn">bzcbzc@mail.ustc.edu.cn</a>
+    <a href="https://github.com/ShiroisWhite">github.com/ShiroisWhite</a>
+  </p>
+</div>
 
 ---
 
