@@ -1,6 +1,5 @@
 ---
 layout: default
-title: 游戏设计思考录
 ---
 
 # 游戏设计思考录
