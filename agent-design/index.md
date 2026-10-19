@@ -156,4 +156,4 @@ python tools/mount_project.py "D:\资料\某游戏" --id my-game --name "某游�
 
 ## 附：实际文件
 
-上面提到的配置都能直接看：[agent-design/_files](https://github.com/ShiroisWhite/personal_game_development_summary/tree/main/agent-design/_files) 下是这份助手的通用层源码（`AGENTS.md`、`ONBOARDING.md`、`skills/`、`knowledge/`、`memory/`、`tools/`），项目相关内容已脱敏。其中依赖企业内部账号的「管理游戏开发项目」技能留在本地，未放进仓库，因此 `files/` 下是 19 个技能。这些文件不参与站点渲染，只在仓库里直接读。
+上面提到的配置都能直接看：[agent-design/_files](https://github.com/ShiroisWhite/personal_game_development_summary/tree/main/agent-design/_files) 下是这份助手的通用层源码（`AGENTS.md`、`ONBOARDING.md`、`skills/`、`knowledge/`、`memory/`、`tools/`），项目相关内容已脱敏。其中依赖企业内部账号的「管理游戏开发项目」技能留在本地，未放进仓库，因此 `_files/` 下是 19 个技能。这些文件不参与站点渲染，只在仓库里直接读。
