@@ -1,0 +1,139 @@
+轮盘（Radial Menu）的设计目的与历史​
+本文整理自学术论文、游戏设计史和现代游戏案例分析，旨在为CrisisX的交互设计决策提供参考。​
+一、轮盘的三个核心设计目的​
+目的 1：解决物理输入约束 — 按键不够用​
+这是游戏领域轮盘发明的直接驱动因素。​ 在主机游戏发展过程中，手柄按键数量长期受限。SNES（1993年）仅有 8 个可操作按键，而同期 PC 键盘拥有 72 个以上独立按键。​ PC 端不需要轮盘：武器绑定 1-0 数字键，技能绑定 F1-F12 ，所有功能一键直达。​ 主机端必须靠组合：8 个按键要承载移动 + 攻击 + 跳跃 + 交互 + 物品 + 技能 + 菜单，只能通过"按住修 饰键 + 方向选择"的方式扩展有效命令数。​ 正如游戏设计资料库 Giant Bomb 对 Radial Menu 的定义所示：​ "The radial menu, used in conjunction with the analogue stick, allows quick access to a large number of menu options with a small number of button presses."​ 游戏史上的证明：​ • 1993 年：圣剑传说 2（SNES）发明 Ring Command——因为 8 个按键承载不下 20+ 种武器/物品/
+魔法​ • PS1/PS2 时代：主机 FPS 换武器需要"暂停→翻菜单"——因为手柄没有数字键​ • Xbox 360 时代起：武器轮盘全面爆发——游戏复杂度爆炸但手柄按键数没变​ • 2019 年至今：APEX / OW2 / VALORANT 的 Ping 轮盘——用同一个键 + 方向代替多个通信快捷键​ 来源：Giant Bomb - Radial Menu Concept​
+目的 2：快速选择 — 战斗紧迫 + 高频操作​
+速度优势有严格的学术实证。​
+Fitts' Law 原理​
+代码块​
+1 Fitts' Law: MT = a + b × log₂(2A/W)​
+
+2​
+3 A = 光标到目标的距离​ 4 W = 目标宽度​
+
+• 线性菜单：第 8 项比第 1 项远得多 → 距离 A 递增 → 选择时间递增​ • 轮盘菜单：所有 8 项到中心等距 → A 恒定 → 每个选项选择时间相同​
+1988 年实证：Callahan 等人（CHI'88）​
+Callahan, J., Hopkins, D., Weiser, M., & Shneiderman, B. "An empirical comparison of pie vs. linear menus." Proceedings of CHI '88. ACM Press.​ 这是轮盘 vs 线性菜单的第一篇实证对比研究。实验设计：33 名大学生，2×3 随机区组。​
+
+指标​ 平均选择时间​ 错误率​ 目标激活面积​
+
+Pie Menu（轮盘）​ 2.26 秒​ 略低​ 3500-6000 px²​
+
+Linear Menu（列表）​ 2.64 秒​ 略高​ 1000-2000 px²​
+
+优势​ 快 ~15%​ P=0.087​ 大 2-3 倍​
+
+更深层原理：方向选择 vs 距离选择​
+轮盘的核心不在"圆形好看"，而在于：​ 方向比距离更快被人类神经系统处理。​ 不需要精确控制鼠标移动多"远"——只要方向对就行。这使选择变成 弹道运动（ballistic movement）——快速、不需要视觉精确校准。​ 如 Kurtenbach 等人在 Autodesk Research 的论文中所写：​ "Direction of movement has the property of scale independence: a movement of any size identifies a menu-item… movements are ballistic."​ 来源：Callahan et al. 1988 — DOI: 10.1145/57167.57182​
+
+目的 3：新手→专家无缝过渡 — 肌肉记忆与盲操​
+这是轮盘设计最被低估的核心价值。​
+1994 年实证：Kurtenbach & Buxton（CHI'94）​
+Kurtenbach, G. & Buxton, W. "User Learning and Performance with Marking Menus." Proceedings of CHI '94. ACM Press.​
+
+这项研究揭示了一个传统界面永远做不到的事情：​ 传统快捷键的根本缺陷：​ • 新手的操作（菜单点选）和专家的操作（Ctrl+Shift+K）是 完全不同的物理动作​ • 学会快捷键的过程 ≠ 练习快捷键的过程，两者无法自然过渡​ Marking Menu 的解决方案：​ • 新手：按住键 → 轮盘弹出 → 鼠标移向目标方向 → 松手​ • 专家：按住键 → 向目标方向快速一划 → 松手（不等待菜单出现）​ • 核心秘密：两者的物理动作是 同一个！只是专家不等待菜单渲染而已​ 实验数据：​ • 专家"盲划"比看着菜单选 快 3.5 倍​ • 频率越高的命令，越容易进入盲划模式（r² = 0.81 ~ 0.88）​ • 专家偶尔会退回看菜单——菜单变成了"空间参考卡片"而非主要操作界面​ 这解释了为什么轮盘不是"好看的菜单"，而是一种学习工具：​ 菜单本身的存在就是训练器——它教会你每个选项的方向，让你最终不再需要它。​ 传统线性菜单做不到这一点：第 8 项每次位置不同（取决于列表长度、滚动位置），无法形成肌肉记 忆。而轮盘的第 8 项 永远在同一个方向。​ 来源：Kurtenbach & Buxton 1994 — DOI: 10.1145/259963.260376​
+二、三个目的的完整体系​
+https://herogames.feishu.cn/sync/KoHcdxDeQsrIGYbVcdEcXBZYntb​
+三、游戏史中的关键里程碑​
+1993 — 圣剑传说 2（Secret of Mana）— Ring Command​
+被认为是电子游戏史上第一个轮盘菜单。​ 在 SNES 手柄仅有 8 个按键的硬件条件下，Square 开发了一套"Ring Command"系统：​ • 按下按钮，角色周围弹出环形图标菜单​ • D-pad 方向选择 → 确认​ • 背景游戏画面保持可见（非全屏遮挡）​ • 支持嵌套子环（子菜单）​
+
+设计博客 Prototypr 评价道：​ "The grandmammy of the illustrious radial menu in games would likely be Secret of Mana's (1993) Ring Command system."​ 来源：Putting the 'Rad' Back in 'Radial Menus' (Prototypr)​
+
+1997 — Turok: Dinosaur Hunter — 武器轮盘​
+N64 上的早期双摇杆 FPS，将武器选择做成轮盘。这是 "Weapon Wheel" 概念的开端。​
+
+2000s — 主机 FPS 标配化​
+随着 Xbox 360 / PS3 世代游戏复杂度爆炸：​ • Halo：2 武器限制（一个换枪键解决）​ • GTA 系列：武器轮盘​ • Mass Effect：指令轮盘（战斗暂停 + 选技能）​ • Batman: Arkham：道具轮盘​
+
+2019 — Apex Legends 的 Ping 轮盘​
+Respawn 用一个月时间禁麦测试，开发出"可替代语音聊天"的 Ping 轮盘系统。这被 Polygon 评价 为：​ "Apex Legends is basically the Journey of first-person shooters — creating a system where complete strangers can coordinate complex team strategies through nonverbal communication."​ EA 随后将该系统加入 无障碍专利承诺，免费开放给所有开发者使用。​ 来源：Game Developer — Respawn played with muted mics​
+
+四、启示​
+轮盘适合的场景（三个目的全部满足）​
+
+条件​ 按键不够​
+
+说明​ 手柄、移动端、或键盘被已有功能占满​
+
+操作紧迫​ 需要盲操​
+
+战斗中需要亚秒级选择​ 高频操作需要肌肉记忆​
+
+轮盘不适合的场景（三个目的全部不满足）​
+
+条件​ 按键充裕​ 操作不紧迫​ 不需要盲操​
+
+说明​ PC 键盘有大量空闲键位​ 社交/拍照/闲逛场景​ 玩家有时间慢慢选​
+
+为什么传统 PC MMO 全都没有轮盘​
+这正是因为 PC 键盘不缺按键（目的 1 不满足），社交动作场景不紧迫（目的 2 不满足），表情不需要 盲操（目的 3 不满足）。逆水寒、剑网3、天涯明月刀、梦幻西游、天龙八部——五款主流国产仙侠 MMO，无一内置轮盘，全部走"面板 + 聊天命令 + 技能栏拖拽"的交互模式。​
+蓝协（Blue Protocol）为什么是例外​
+蓝色协议内置 3 层 8 槽轮盘（按住 V/T → 鼠标选择 → 松开释放 + F5-F9 快捷键），是因为它同时兼容 手柄 + 移动端——目的 1（按键约束）成立，轮盘才有存在必要。​
+
+五、结论​
+轮盘不是"比列表菜单更好看的替代品"——它是一个特定约束条件下的工程最优解。​ 三个核心设计目的按优先级排序：​ 1. 物理约束（按键少）→ 轮盘的发明原因​ 2. 速度需求（战斗快）→ 轮盘的采纳原因​ 3. 技能过渡（新手→专家）→ 轮盘最被低估的价值​ 如果一个场景同时满足这三个条件，轮盘是最优方案。如果三个条件都不满足（如传统 PC MMO 的表 情系统），轮盘就是"为了差异化而差异化"——可以有，但不是必须。​ 对于 WYGame，需要诚实地评估：PC 做动作场景是否满足这三个条件？如果答案是否定的，传统 MMO 的"面板 + 拖拽到技能栏"方案可能更合适；如果是肯定的，蓝协模式值得参考。​
+六、轮盘手感调参方法论​
+
+前五章回答"轮盘为什么值得用"，本章回答"一旦用上，手感该怎么调"。轮盘手感不是靠单一"速度"参 数，而是几何骨架与参数旋钮叠加的结果。动手调之前，先分清哪部分由预制体几何决定、哪部分由 参数决定——两者来源不同，能改的层级也不同。​
+核心框架：手感三件套​
+轮盘手感 = 几何骨架 × 运动速度 × 边界宽容。三者各管一块、互不替代。​
+
+层​ 它决定什么​
+
+数值来源​
+
+能调吗​
+
+几何骨 指针拖进中心后，是否保留上 centerRadius = 中心块
+
+非参数；改了会连带破坏图
+
+架：中心 一次选中​
+
+DynamicCenterHitArea 宽度一 标/扇区排布
+
+死区​
+
+半（预制体尺寸）​
+
+几何骨 指针拖出外沿后，对于角速度 outerRadius = 背景
+
+非参数​
+
+架：外圈​ 的控制是否变化​
+
+DynamicWheelBg 宽度一半；
+
+C# ClampOffset 另封顶 420​
+
+运动：速 指针扫过扇区的快慢​ 度​
+
+RunParam 980
+
+参数，可调​
+
+OperationAngularSpeed = 70​
+
+边界：宽 中心死区的"软硬"——进中心 RunParam 981
+
+参数​
+
+容​ 后能停留多久​
+
+DiagonalTransitionTime = 1.2 秒​
+
+调参心法：​ • 想更跟手、更快 → 调大 980 速度。​ • 但 980 拉高会放大"快速穿心"的抖动 → 必须用 981 宽限做减震。两者是一对：一个给速度，一个
+给"快速穿心"兜底，调一个要跟着调另一个。​ • 中心死区与外圈半径属于视觉骨架，通常不动，它们决定"轮盘多大、中心留多宽"。​
+
+参考资料​
+1. Callahan, J., Hopkins, D., Weiser, M., & Shneiderman, B. (1988). An empirical comparison of pie vs. linear menus. CHI '88.​
+2. Kurtenbach, G. & Buxton, W. (1994). User Learning and Performance with Marking Menus. CHI '94.​
+3. Bill Buxton — Marking Menu Resource Page​ 4. Giant Bomb — Radial Menu Concept Page​ 5. Putting the 'Rad' Back in 'Radial Menus' (Prototypr)​
+
+6. Big Medium — Touch Means a New Chance for Radial Menus 7. RADIAL MENUS IN VIDEO GAMES (Champicky, 2022)​ 8. Game Developer — Respawn played with muted mics to get Apex Legends' smart comms
+system just right​ 9. EVE Online — Reinventing the Radial Menu for Odyssey​ 10. Wikipedia — Pie Menu
+
+

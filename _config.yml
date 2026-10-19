@@ -20,3 +20,7 @@ kramdown:
 
 # GitHub Pages 数学公式支持
 math_engine: mathjax
+
+# 助手源码是给读者直接看的，不参与 Jekyll 渲染
+exclude:
+  - agent-design/files

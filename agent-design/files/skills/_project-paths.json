@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "project_id": null,
+  "_comment": "所有项目路径都从这里取；挂载项目时由 mount_project.py 自动写入，null 表示没有该资源，技能应跳过对应链路而不是猜路径。",
+  "engine": null,
+  "unity_project": null,
+  "code_csharp": null,
+  "code_lua": null,
+  "prefab_root": null,
+  "config_root": null,
+  "language_table": null,
+  "prototype_out": null,
+  "memory_root": null
+}
