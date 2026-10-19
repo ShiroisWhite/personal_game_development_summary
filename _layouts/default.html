@@ -4,29 +4,134 @@
   {% include head.html %}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;700;900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;700;900&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="{{ '/assets/site.css' | relative_url }}">
 </head>
 <body class="{% if page.url == '/' %}is-home{% endif %}">
   <a class="skip-link" href="#main">跳到正文</a>
 
-  <header class="masthead">
-    <div class="masthead__inner">
-      <a class="masthead__brand" href="{{ '/' | relative_url }}">游戏设计思考录</a>
-      <span class="masthead__who">白紫晨 · 系统策划 / SOC · 射击</span>
+  <div class="progress" aria-hidden="true"><span class="progress__bar"></span></div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="brand" href="{{ '/' | relative_url }}">
+        <span class="brand__mark">游戏设计思考录</span>
+        <span class="brand__sub">System Design Notes</span>
+      </a>
+      <nav class="topnav" aria-label="主导航">
+        <a href="{{ '/' | relative_url }}"{% if page.url == '/' %} aria-current="page"{% endif %}>首页</a>
+        <a href="{{ '/soc-methodology/' | relative_url }}"{% if page.url contains '/soc-methodology' %} aria-current="page"{% endif %}>方法论</a>
+        <a href="{{ '/agent-design/' | relative_url }}"{% if page.url contains '/agent-design' %} aria-current="page"{% endif %}>助手</a>
+        <a href="https://github.com/ShiroisWhite" rel="noopener">GitHub</a>
+        <button class="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色">◐</button>
+      </nav>
     </div>
   </header>
 
-  <main id="main" class="page">
-    {{ content }}
-  </main>
+  <div class="shell" id="shell">
+    <aside class="rail" id="rail" hidden>
+      <span class="rail__label">目录</span>
+      <ul class="rail__list" id="rail-list"></ul>
+    </aside>
+
+    <main id="main" class="page">
+      {{ content }}
+    </main>
+  </div>
 
   <footer class="colophon">
     <span>白紫晨 · 中国科学技术大学 电子信息工程</span>
     <span class="colophon__links">
       <a href="mailto:bzcbzc@mail.ustc.edu.cn">bzcbzc@mail.ustc.edu.cn</a>
-      <a href="https://github.com/ShiroisWhite">GitHub</a>
+      <a href="https://github.com/ShiroisWhite" rel="noopener">GitHub</a>
     </span>
   </footer>
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* ---- 深/浅色：读取上次选择，没有就跟随系统 ---- */
+    var root = document.documentElement;
+    try {
+      var saved = localStorage.getItem("gd-theme");
+      if (saved === "light" || saved === "dark") { root.setAttribute("data-theme", saved); }
+    } catch (e) {}
+    var toggle = document.querySelector(".theme-toggle");
+    if (toggle) {
+      toggle.addEventListener("click", function () {
+        var isDark = root.getAttribute("data-theme") === "dark" ||
+          (!root.getAttribute("data-theme") &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        var next = isDark ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        try { localStorage.setItem("gd-theme", next); } catch (e) {}
+        toggle.textContent = next === "dark" ? "◑" : "◐";
+      });
+      var cur = root.getAttribute("data-theme");
+      if (cur === "dark") { toggle.textContent = "◑"; }
+    }
+
+    /* ---- 目录轨：从正文 h2 生成 ---- */
+    var main = document.getElementById("main");
+    var rail = document.getElementById("rail");
+    var list = document.getElementById("rail-list");
+    var shell = document.getElementById("shell");
+
+    if (main && rail && list) {
+      var heads = Array.prototype.slice.call(main.querySelectorAll("h2")).filter(function (h) {
+        return h.id && h.textContent.trim();
+      });
+
+      if (heads.length >= 2) {
+        heads.forEach(function (h) {
+          var li = document.createElement("li");
+          var a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent.trim();
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+        rail.hidden = false;
+
+        /* 滚动高亮 */
+        var links = Array.prototype.slice.call(list.querySelectorAll("a"));
+        var spy = function () {
+          var offset = window.innerHeight * 0.28;
+          var active = 0;
+          heads.forEach(function (h, i) {
+            if (h.getBoundingClientRect().top <= offset) { active = i; }
+          });
+          links.forEach(function (a, i) {
+            a.classList.toggle("is-active", i === active);
+          });
+        };
+        var ticking = false;
+        window.addEventListener("scroll", function () {
+          if (ticking) { return; }
+          ticking = true;
+          window.requestAnimationFrame(function () { spy(); ticking = false; });
+        }, { passive: true });
+        spy();
+      } else if (shell) {
+        shell.classList.add("no-rail");
+      }
+    }
+
+    /* ---- 阅读进度 ---- */
+    var bar = document.querySelector(".progress__bar");
+    if (bar) {
+      var update = function () {
+        var h = document.documentElement;
+        var max = h.scrollHeight - h.clientHeight;
+        var ratio = max > 0 ? Math.min(1, h.scrollTop / max) : 0;
+        bar.style.width = (ratio * 100) + "%";
+      };
+      window.addEventListener("scroll", update, { passive: true });
+      window.addEventListener("resize", update);
+      update();
+    }
+  })();
+  </script>
 </body>
 </html>

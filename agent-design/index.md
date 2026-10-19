@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: 沙盒生存策划助手 · 配置实况
 ---
